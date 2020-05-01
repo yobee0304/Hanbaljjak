@@ -1,4 +1,5 @@
 from flask import Flask
+from Controller import phoControl
 
 app = Flask(__name__)
 
@@ -13,16 +14,16 @@ def sentenceControl():
     return 'sentece success'
 
 # API2
-@app.route('/phoneme')
+@app.route('/result')
 def phonemeControl():
 
-    return 'phoneme success'
+    return 'result success'
 
 # API3
-@app.route('/result')
+@app.route('/total')
 def resultControl():
 
-    return 'result success'
+    return 'total success'
 
 # Main
 if __name__ == '__main__':
