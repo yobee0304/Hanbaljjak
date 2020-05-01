@@ -1,20 +1,29 @@
 from flask import Flask
-from Controller import ttsControl
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def hello_world():
     return 'Hello World!'
 
-# TTS REST API
-@app.route('TTS')용
-def play_text():
+# API1
+@app.route('/sentence')
+def sentenceControl():
 
-    ttsControl.TTS("안녕하세요. 반갑습니다.");
+    return 'sentece success'
 
-    return 'playing'
+# API2
+@app.route('/phoneme')
+def phonemeControl():
 
+    return 'phoneme success'
+
+# API3
+@app.route('/result')
+def resultControl():
+
+    return 'result success'
+
+# Main
 if __name__ == '__main__':
     app.run()
