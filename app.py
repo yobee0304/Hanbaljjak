@@ -1,30 +1,16 @@
 from flask import Flask
-from Controller import phoControl
+from flask_url_mapping import FlaskUrls
+
+from database import init_db
+from urls import urls
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
+flask_urls = FlaskUrls(app)
+flask_urls.register_urls(urls)
 
-# API1
-@app.route('/sentence')
-def sentenceControl():
+# Create DB
+init_db()
 
-    return 'sentece success'
-
-# API2
-@app.route('/result')
-def phonemeControl():
-
-    return 'result success'
-
-# API3
-@app.route('/total')
-def resultControl():
-
-    return 'total success'
-
-# Main
 if __name__ == '__main__':
     app.run()
