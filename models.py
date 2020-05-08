@@ -74,39 +74,3 @@ class Record(Base):
                % (self.recordId, self.recordData, self.type, self.count)
 			   
 			   
-# 임시 데이터
-"""
-s1 = Sentence(1, "날씨가 맑다", "날씨가 막따")
-db_session.add(s1)
-s2 = Sentence(2, "공권력", "공꿘녁")
-db_session.add(s2)
-db_session.commit()
-
-p1 = Phoneme(11, 1, 'ㄱ', 'b')
-db_session.add(p1)
-p2 = Phoneme(12, 1, 'ㄸ', 'u')
-db_session.add(p2)
-p3 = Phoneme(13, 2, 'ㄲ', 'u')
-db_session.add(p3)
-p4 = Phoneme(14, 2, 'ㄴ', 'u')
-db_session.add(p4)
-db_session.commit()
-
-rs1 = Result(21, 1, "날씨가 말따", 86)
-db_session.add(rs1)
-rs2 = Result(22, 2, "공궐력", 60)
-db_session.add(rs2)
-db_session.commit()
-
-rc1 = Record(31, 'ㄱ', 'b', '1')
-db_session.add(rc1)
-rc2 = Record(32, 'ㄲ', 'u', '1')
-db_session.add(rc2)
-rc3 = Record(33, 'ㄴ', 'b', '1')
-db_session.add(rc3)
-rc4 = Record(34, 'ㄴ', 'u', '1')
-db_session.add(rc4)
-rc5 = Record(35, 'ㄱ', 'u', '2')
-db_session.add(rc5)
-db_session.commit()
-"""
