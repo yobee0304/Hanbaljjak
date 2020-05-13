@@ -65,9 +65,7 @@ def main():
     """
     import easydict
 
-    args = easydict.EasyDict({
-    "local_file_path": "./voice/file3.wav"
-    })
+    args = easydict.EasyDict({"local_file_path": "./voice/file3.wav"})
     
     sample_recognize(args.local_file_path)
 

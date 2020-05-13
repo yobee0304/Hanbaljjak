@@ -22,7 +22,7 @@ class Result(Base):
     sentenceId = Column(ForeignKey('sentence.sentenceId'))
     resultData = Column(VARCHAR(50))
     score = Column(Float)
-    date = Column(DateTime, default=datetime.datetime.utcnow())
+    date = Column(DateTime, default=datetime.datetime.now())
 
 class Record(Base):
     __tablename__ = 'record'
