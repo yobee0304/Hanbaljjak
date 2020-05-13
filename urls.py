@@ -6,7 +6,7 @@ from Controller.totalControl import totalControl
 # url mapping
 urls = [
     ('/', homeControl, ["GET"]),
-    ('/sentence', sentenceControl, ["GET"]),
-    ('/result', resultControl, ["GET", "POST"]),
-    ('/total', totalControl, ["GET"]),
+    ('/getSentence', sentenceControl, ["GET"]),
+    ('/getResult', resultControl, ["GET", "POST"]),
+    ('/getTotal', totalControl, ["GET"]),
 ]
