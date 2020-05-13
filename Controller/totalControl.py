@@ -42,7 +42,7 @@ def totalControl():
 	for practice in db_session.query(Result).order_by(Result.date).limit(5):
 		recent_lst.append(practice.score)
 
-	total = {"mostPhoneme": most_lst, "recommendSentence": recommend_lst, recentScore: recent_lst}
+	total = {"mostPhoneme": most_lst, "recommendSentence": recommend_lst, "recentScore": recent_lst}
 
 	#print(request.args.get(jsonify))
 	# 틀린 음소와 타입, 추천 문장 1개, 문장 일치율 5개 json으로
