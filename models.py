@@ -33,7 +33,7 @@ class Phoneme(Base):
 
     def __repr__(self):
         return "<Phoneme('%d', '%d', '%s', '%s')>" \
-               % (self.phonemeId, self.sentenceId, self.phonemeId, self.type)
+               % (self.phonemeId, self.sentenceId, self.phonemeData, self.type)
 
 
 class Result(Base):
@@ -53,7 +53,7 @@ class Result(Base):
 
     def __repr__(self):
         return "<Result('%d', '%d', '%s', '%f')>" \
-               % (self.resultId, self.sentenceId, self.resultId, self.score)
+               % (self.resultId, self.sentenceId, self.resultData, self.score)
 
 
 class Record(Base):
@@ -72,5 +72,3 @@ class Record(Base):
     def __repr__(self):
         return "<Record('%d', '%s', '%s', '%d')>" \
                % (self.recordId, self.recordData, self.type, self.count)
-			   
-			   
