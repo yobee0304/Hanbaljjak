@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, VARCHAR, CHAR, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, VARCHAR, CHAR, Float, DateTime, ForeignKey, Boolean
 from database import Base, db_session
 
 import datetime
@@ -8,14 +8,17 @@ class Sentence(Base):
     sentenceId = Column(Integer, primary_key=True)
     sentenceData = Column(VARCHAR(50))
     standard = Column(VARCHAR(50))
-	
-	def __init__(self, stid, stdata, standard):
-		self.sentenceId = stid
-		self.sentenceData = stdata
-		self.standard = standard
+    check = Column(Boolean, default=False)
+
+    def __init__(self, stid, stdata, standard, check):
+        self.sentenceId = stid
+        self.sentenceData = stdata
+        self.standard = standard
+        self.check = check
 
     def __repr__(self):
-        return "<Sentence('%d', '%s', '%s')>" % (self.sentenceId, self.sentenceData, self.standard)
+        return "<Sentence('%d', '%s', '%s', '%d')>" \
+               % (self.sentenceId, self.sentenceData, self.standard, self.check)
 
 
 class Phoneme(Base):
@@ -24,7 +27,7 @@ class Phoneme(Base):
     sentenceId = Column(ForeignKey('sentence.sentenceId'))
     phonemeData = Column(CHAR(10))
     type = Column(CHAR(10))
-	
+
     def __init__(self, phid, stid, phdata, type):
         self.phonemeId=phid
         self.sentenceId = stid
@@ -43,7 +46,7 @@ class Result(Base):
     resultData = Column(VARCHAR(50))
     score = Column(Float)
     date = Column(DateTime, default=datetime.datetime.now())
-	
+
     def __init__(self, rsid, stid, rsdata, score):
         self.resultId = rsid
         self.sentenceId = stid
@@ -62,7 +65,7 @@ class Record(Base):
     recordData = Column(CHAR(10))
     type = Column(CHAR(10))
     count = Column(Integer, default=0)
-	
+
     def __init__(self, rcid, rcdata, type, count):
         self.recordId = rcid
         self.recordData = rcdata
