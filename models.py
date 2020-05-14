@@ -10,8 +10,7 @@ class Sentence(Base):
     standard = Column(VARCHAR(50))
     check = Column(Boolean, default=False)
 
-    def __init__(self, stid, stdata, standard, check):
-        self.sentenceId = stid
+    def __init__(self, stdata, standard, check):
         self.sentenceData = stdata
         self.standard = standard
         self.check = check
@@ -28,8 +27,7 @@ class Phoneme(Base):
     phonemeData = Column(CHAR(10))
     type = Column(CHAR(10))
 
-    def __init__(self, phid, stid, phdata, type):
-        self.phonemeId=phid
+    def __init__(self, stid, phdata, type):
         self.sentenceId = stid
         self.phonemeData = phdata
         self.type = type
@@ -47,12 +45,11 @@ class Result(Base):
     score = Column(Float)
     date = Column(DateTime, default=datetime.datetime.now())
 
-    def __init__(self, rsid, stid, rsdata, score):
-        self.resultId = rsid
+    def __init__(self, stid, rsdata, score):
         self.sentenceId = stid
         self.resultData = rsdata
         self.score = score
-        self.date = datetime.datetime.utcnow()
+        self.date = datetime.datetime.now()
 
     def __repr__(self):
         return "<Result('%d', '%d', '%s', '%f')>" \
@@ -66,8 +63,7 @@ class Record(Base):
     type = Column(CHAR(10))
     count = Column(Integer, default=0)
 
-    def __init__(self, rcid, rcdata, type, count):
-        self.recordId = rcid
+    def __init__(self, rcdata, type, count):
         self.recordData = rcdata
         self.type = type
         self.count = count
