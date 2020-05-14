@@ -1,5 +1,7 @@
 from models import Phoneme, Result, Record, Sentence
 from database import db_session
+from flask import json
+import random
 
 # API3
 """
