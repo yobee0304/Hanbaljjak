@@ -21,24 +21,23 @@ def totalControl():
 		most_lst.append([most.recordData, most.type])
 
 	# 많이 틀린 음소 3개의 추천문장ID 1개씩 총 3개
-	for rec in db_session.query(Phoneme).filter(Phoneme.phonemeData == most_lst[0][0]). \
-			filter(Phoneme.type == most_lst[0][1]):
-		recommend_temp.append(rec.sentenceId)
+	for i in range(0, 3):
+		for rec in db_session.query(Phoneme).filter(Phoneme.phonemeData == most_lst[i][0]). \
+				filter(Phoneme.type == most_lst[i][1]):
+			if rec.sentenceId not in recommend_temp:
+				recommend_temp.append(rec.sentenceId)
 
-	for rec in db_session.query(Phoneme).filter(Phoneme.phonemeData == most_lst[1][0]). \
-			filter(Phoneme.type == most_lst[1][1]):
-		recommend_temp.append(rec.sentenceId)
-
-	for rec in db_session.query(Phoneme).filter(Phoneme.phonemeData == most_lst[2][0]). \
-			filter(Phoneme.type == most_lst[2][1]):
-		recommend_temp.append(rec.sentenceId)
-
-	recommend_temp = list(set(recommend_temp))
 	# 추천 문장 3개 랜덤으로 선택
-	recommend_lst.append(random.choice(recommend_temp))
-	recommend_lst.append(random.choice(recommend_temp))
-	recommend_lst.append(random.choice(recommend_temp))
-	recommend_lst = list(set(recommend_lst))
+	if len(recommend_temp) < 3:
+		while len(recommend_lst) != len(recommend_temp):
+			item = random.choice(recommend_temp)
+			if item not in recommend_lst:
+				recommend_lst.append(item)
+	else:
+		while len(recommend_lst) != 3:
+			item = random.choice(recommend_temp)
+			if item not in recommend_lst:
+				recommend_lst.append(item)
 
 	# 최근에 연습한 문장의 일치율 최대 5개
 	for practice in db_session.query(Result).order_by(Result.date).limit(5):
