@@ -5,6 +5,9 @@ from Controller.totalControl import totalControl
 from Controller.customerSentenceControl import customerSentenceControl
 from Controller.insSentenceControl import insSentenceControl
 from Controller.delSentenceControl import delSentenceControl
+from Controller.wordbookControl import wordbookControl
+from Controller.insWordbookControl import insWordBookControl
+from Controller.delWordBookControl import delWordBookControl
 
 # url mapping
 urls = [
@@ -14,5 +17,8 @@ urls = [
     ('/getTotal', totalControl, ["GET"]),
     ('/getCustomSentence', customerSentenceControl, ["GET"]),
     ('/insertSentence', insSentenceControl, ["GET", "POST"]),
-    ('/deleteSentence', delSentenceControl, ["GET", "POST"])
+    ('/deleteSentence', delSentenceControl, ["GET", "POST"]),
+    ('/getWordBook', wordbookControl, ["GET"]),
+    ('/insertWordBook', insWordBookControl, ["GET", "POST"]),
+    ('/deleteWordBook', delWordBookControl, ["GET", "POST"])
 ]

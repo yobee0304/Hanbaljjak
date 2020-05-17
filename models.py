@@ -20,21 +20,21 @@ class Sentence(Base):
                % (self.sentenceId, self.sentenceData, self.standard, self.check)
 
 
-class Phoneme(Base):
-    __tablename__ = 'phoneme'
-    phonemeId = Column(Integer, primary_key=True)
+class Word(Base):
+    __tablename__ = 'word'
+    wordId = Column(Integer, primary_key=True)
     sentenceId = Column(ForeignKey('sentence.sentenceId'))
-    phonemeData = Column(CHAR(10))
+    wordData = Column(CHAR(10))
     type = Column(CHAR(10))
 
-    def __init__(self, stid, phdata, type):
+    def __init__(self, stid, wddata, type):
         self.sentenceId = stid
-        self.phonemeData = phdata
+        self.wordData = wddata
         self.type = type
 
     def __repr__(self):
-        return "<Phoneme('%d', '%d', '%s', '%s')>" \
-               % (self.phonemeId, self.sentenceId, self.phonemeData, self.type)
+        return "<Word('%d', '%d', '%s', '%s')>" \
+               % (self.wordId, self.sentenceId, self.wordData, self.type)
 
 
 class Result(Base):
@@ -71,3 +71,15 @@ class Record(Base):
     def __repr__(self):
         return "<Record('%d', '%s', '%s', '%d')>" \
                % (self.recordId, self.recordData, self.type, self.count)
+
+class WordBook(Base):
+    __tablename__ = 'wordbook'
+    wordbookId = Column(Integer, primary_key=True)
+    wordData = Column(VARCHAR(50))
+
+    def __init__(self, wddata):
+        self.wordData = wddata
+
+    def __repr__(self):
+        return "<WordBook('%d', '%s')>" \
+               % (self.wordbookId, self.wordData)
