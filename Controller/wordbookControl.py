@@ -9,7 +9,7 @@ def wordbookControl():
     wordbook_lst=[]    # wordbookId, wordbookData, 추천 문장Id 딕셔너리 저장
     recommend_temp = []
     recommend_lst = []    # 추천 문장 ID 최대 3개 저장
-    wordbook_dict = {"wordbookId" : 0, "wordData" : "", "recommendSentence" : []}
+    wordbook_dict = {"wordbookId" : 0, "wordData" : "", "recommendSentenceId" : []}
 
     for wb in db_session.query(WordBook).order_by(WordBook.wordbookId):
         wordbook_dict["wordbookId"] = wb.wordbookId
@@ -28,7 +28,7 @@ def wordbookControl():
                 if item not in recommend_lst:
                     recommend_lst.append(item)
 
-        wordbook_dict["recommendSentence"] = recommend_lst
+        wordbook_dict["recommendSentenceId"] = recommend_lst
 
         wordbook_lst.append(wordbook_dict.copy())
 
