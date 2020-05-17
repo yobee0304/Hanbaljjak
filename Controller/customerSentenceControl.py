@@ -1,11 +1,14 @@
 import json
-from models import Phoneme, Result, Record, Sentence
+from models import Sentence
 from database import db_session
 
+# API 4
+# 유저 문장 리스트 반환
 def customerSentenceControl():
     cust_sentence_lst = []
     cust_sentence_dict = {"sentenceId": 0, "sentenceData": "", "standard": ""}
 
+    # check==True인 sentenceId, senteceData, standard 반환
     for sen in db_session.query(Sentence).order_by(Sentence.sentenceId).filter(Sentence.check == True):
         cust_sentence_dict["sentenceId"] = sen.sentenceId
         cust_sentence_dict["sentenceData"] = sen.sentenceData
