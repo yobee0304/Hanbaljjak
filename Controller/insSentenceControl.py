@@ -1,4 +1,4 @@
-from models import Sentence, Phoneme
+from models import Sentence
 from database import db_session
 from flask import request
 import requests

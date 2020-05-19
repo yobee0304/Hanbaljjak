@@ -6,7 +6,7 @@ from Controller.customerSentenceControl import customerSentenceControl
 from Controller.insSentenceControl import insSentenceControl
 from Controller.delSentenceControl import delSentenceControl
 from Controller.wordbookControl import wordbookControl
-from Controller.insWordbookControl import insWordBookControl
+from Controller.insWordBookControl import insWordBookControl
 from Controller.delWordBookControl import delWordBookControl
 
 # url mapping
