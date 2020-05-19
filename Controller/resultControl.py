@@ -86,17 +86,18 @@ def sample_recognize(local_file_path):
 from flask import request, jsonify
 from werkzeug.utils import secure_filename
 from database import db_session
-from models import Sentence, Result, Record, Phoneme
+from models import Sentence, Result, Record, Word
 import easydict
 import os
 import random
+from konlpy.tag import Hannanum
 
 
-FILE_DIRECTORY = "./uploadFile/"
-
-# 디렉터리 없으면 생성하기
-if not os.path.exists(FILE_DIRECTORY):
-    os.makedirs(FILE_DIRECTORY)
+# FILE_DIRECTORY = "./uploadFile/"
+#
+# # 디렉터리 없으면 생성하기
+# if not os.path.exists(FILE_DIRECTORY):
+#     os.makedirs(FILE_DIRECTORY)
 
 # API2
 def resultControl():
@@ -104,11 +105,11 @@ def resultControl():
     if(request.method == 'POST'):
 
         # 클라이언트에서 sentenceId & wav file 받아옴
-        wav = request.files['file']
+        receiveData = request.form['sentenceData']
         sentenceId = request.form['sentenceId']
 
         # upload 디렉터리에 저장
-        wav.save(FILE_DIRECTORY + secure_filename(wav.filename))
+        # wav.save(FILE_DIRECTORY + secure_filename(wav.filename))
 
         ##### upload 디렉터리에 있는 파일을 STT로 변한
 
@@ -121,24 +122,33 @@ def resultControl():
 
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴
         Pick_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sentenceId).first()
+
         # print(Pick_sentence)
         ##### 분석 알고리즘
 
-        # TODO UserSentence 추가
-        # receiveData = "Sample1"
+        hannanum = Hannanum()
 
-        # Test Sentences
-        receiveData = "날씨가 참 말따"
         StandardSentence = Pick_sentence.standard
         sentenceData = Pick_sentence.sentenceData
 
-        # 문자열 길이가 다르면 다시 요청
-        if(len(receiveData) != len(StandardSentence)):
-            return 'repeat'
+        # print(hannanum.morphs(sentenceData))
+        # print(hannanum.nouns(sentenceData))
+        # print(hannanum.pos(sentenceData))
+
 
         # 공백 인덱스 리스트 생성
-        BlankList = [i for i, value in enumerate(receiveData) if value == " "]
+        # 공백 개수는 일치
+        userBlankList = [i for i, value in enumerate(receiveData) if value == " "]
+        standardBlankList = [i for i, value in enumerate(StandardSentence) if value == " "]
         # print(BlankList)
+
+        # 문자열 길이가 다르거나 공백 개수가 다르면
+        # 재시도 요청
+        if (len(receiveData) != len(StandardSentence) or len(userBlankList) != len(standardBlankList)):
+            return jsonify(
+                resultData=receiveData,
+                errorMessage="repeat",
+            )
 
         # 공백 제거
         UserSentence = receiveData.replace(" ", "")
@@ -150,7 +160,8 @@ def resultControl():
 
         Total_pho = 0           # 총 음소 개수
         Wrong_total_pho = 0     # 틀린 음소 개수
-        Wrong_word_index = []   # 틀린 글자 데이터가 들어있는 리스
+        Wrong_word_index_list = []   # 틀린 글자 데이터가 들어있는 리스트
+        Wrong_word_list = []         # 틀린 단어 데이터가 들어있는 리스트
         Wrong_pho_dict = {'u' : {},
                           'm' : {},     # 틀린 음소가 저장되는 딕셔너리
                           'b' : {}}     # u : 자음, m : 모음, b : 받침
@@ -168,7 +179,7 @@ def resultControl():
             # 글자가 일치하지 않는 경우
             # 음소 분해
             else:
-                Wrong_word_index.append(index)
+                Wrong_word_index_list.append(index)
                 UserPho = phonemeConvert(UserSentence[index])
                 SentencePho = phonemeConvert(sentenceData[index])
 
@@ -200,7 +211,7 @@ def resultControl():
 
         # print(Wrong_pho_dict)
 
-        #########TODO 틀린 음소 record 테이블에 count 올림 -> TEST SUCCESS
+        ######### 틀린 음소 record 테이블에 count 올림 -> TEST SUCCESS
         for type in Wrong_pho_dict:
             for pho in Wrong_pho_dict[type]:
                 # print(pho)
@@ -214,12 +225,40 @@ def resultControl():
         # 일치율
         Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
 
+        # 일치율 100%인 경우
+        if Correct_rate == 1:
+            return jsonify(
+                resultData=receiveData,
+                score=Correct_rate,
+            )
+
         # print(Total_pho, Wrong_total_pho, Correct_rate)
 
-        for i in BlankList:
-            for index, j in enumerate(Wrong_word_index):
+        Wrong_word_index = 0
+
+        # print(hannanum.pos(Pick_sentence.sentenceData))
+        # print(Wrong_word_index_list)
+
+        # 틀린 단어 리스트에 추가
+        for pos in hannanum.pos(Pick_sentence.sentenceData):
+            for pos_word in pos[0]:
+                # print(sentenceData[Wrong_word_index_list[Wrong_word_index]], pos_word)
+                if sentenceData[Wrong_word_index_list[Wrong_word_index]] == pos_word:
+                    Wrong_word_index += 1
+                    # N : 명사 / M : / P :
+                    if pos[1] == 'N' or pos[1] == 'M' or pos[1] == 'P':
+                        Wrong_word_list.append(pos)
+                        break
+
+            if Wrong_word_index == len(Wrong_word_index_list):
+                break
+
+        # print(Wrong_word_list)
+
+        for i in userBlankList:
+            for index, j in enumerate(Wrong_word_index_list):
                 if(j >= i):
-                    Wrong_word_index[index] += 1
+                    Wrong_word_index_list[index] += 1
 
         # print(Wrong_word_index)
 
@@ -228,57 +267,40 @@ def resultControl():
         db_session.add(resultData)
         db_session.commit()
 
-        ######## 가장 많이 틀린 음소에 대한 추천 문장 1개
-        max = 0
-        Max_pho_dict = {'u': [],
-                        'm': [],
-                        'b': []}
+        ######## 가장 많이 틀린 단어에 대한 추천 문장 1개
 
-        for type in Wrong_pho_dict:
-            for pho in Wrong_pho_dict[type]:
-                if(max <= Wrong_pho_dict[type][pho]):
-                    if(max < Wrong_pho_dict[type][pho]):
-                        Max_pho_dict = {'u': [],
-                                        'm': [],
-                                        'b': []}
-                        max = Wrong_pho_dict[type][pho]
-                    Max_pho_dict[type].append(pho)
+        recommend_OtoD = dict(sentenceId=-1, sentenceData="", standard="")
+        recommend_word = ""
 
-        # print(max)
-        # print(Max_pho_dict)
+        # 틀린 단어 리스트에 단어가 존재할 경우
+        if Wrong_word_list:
+            random.shuffle(Wrong_word_list)
 
-        # Random Select
-        type_list = ['u', 'm', 'b']
-        while(1):
-            random_select_type = random.choice(type_list)
-            if len(Max_pho_dict[random_select_type]) > 0:
-                break
-        # print(Max_pho_dict[random_select_type])
-        random_select_pho_idx = random.randint(0, len(Max_pho_dict[random_select_type])-1)
-        random_select_pho = Max_pho_dict[random_select_type][random_select_pho_idx]
+            for random_select_word in Wrong_word_list:
+                Word_query = db_session.query(Word).filter(Word.wordData == random_select_word[0])\
+                    .filter(Word.type == random_select_word[1]).filter(Word.sentenceId != sentenceId)
+                Word_entry = [pq.sentenceId for pq in Word_query]
 
-        # 가장 많이 틀린 음소가 들어있는 문장의 SenteceId
-        Phoneme_query = db_session.query(Phoneme).filter(Phoneme.type == random_select_type)\
-                                                    .filter(Phoneme.phonemeData == random_select_pho)
-        Phoneme_entry = [pq.sentenceId for pq in Phoneme_query]
-        random_select_setencdId = random.choice(Phoneme_entry)
+                if Word_entry:
+                    recommend_word = random_select_word[0]
+                    random_select_setencdId = random.choice(Word_entry)
+                    Recommend_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == random_select_setencdId).first()
+                    recommend_OtoD['sentenceId'] = Recommend_sentence.sentenceId
+                    recommend_OtoD['sentenceData'] = Recommend_sentence.sentenceData
+                    recommend_OtoD['standard'] = Recommend_sentence.standard
+                    break
 
-        Recommend_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == random_select_setencdId).first()
-        recommend_OtoD = dict(sentenceId=Recommend_sentence.sentenceId, sentenceData=Recommend_sentence.sentenceData,
-                              standard=Recommend_sentence.standard)
-
-        # print("recommendSenteceData", Recommend_sentence.sentenceData)
-        # print("recommendStandard", Recommend_sentence.standard)
 
     # 결과 데이터를 모두 json으로 묶음
     return jsonify(
         standard = Pick_sentence.standard,
         resultData = receiveData,
         score = Correct_rate,
-        type = random_select_type,
-        phonemeData = random_select_pho,
-        recommend = recommend_OtoD,
-        wrongIndex = Wrong_word_index
+        recommendWord = recommend_word,
+        userBlank = userBlankList,
+        standardBlank = standardBlankList,
+        recommendSentence = recommend_OtoD,
+        wrongIndex = Wrong_word_index_list
     )
 
 ###############################################################
