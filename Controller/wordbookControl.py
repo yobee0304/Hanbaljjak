@@ -11,17 +11,19 @@ def wordbookControl():
     recommend_lst = []    # 추천 문장 ID 최대 3개 저장
     wordbook_dict = {"wordbookId" : 0, "wordData" : "", "recommendSentenceId" : []}
 
+    # wordbook 테이블에서 wordbookId와 wordData 가져오기
     for wb in db_session.query(WordBook).order_by(WordBook.wordbookId):
         wordbook_dict["wordbookId"] = wb.wordbookId
         wordbook_dict["wordData"] = wb.wordData
+        # wordData가 같은 sentenceId 가져오기
         for word in db_session.query(Word).filter(Word.wordData == wb.wordData):
             recommend_temp.append(word.sentenceId)
 
+        # sentenceId가 3개 미만일 때 추천 문장id 반환
         if len(recommend_temp) < 3:
-            while len(recommend_lst) != len(recommend_temp):
-                item = random.choice(recommend_temp)
-                if item not in recommend_lst:
-                    recommend_lst.append(item)
+            recommend_lst = recommend_temp
+
+        # sentenceId가 3개 이상일 때 추천 문장id 3개 랜덤 선택
         else:
             while len(recommend_lst) != 3:
                 item = random.choice(recommend_temp)

@@ -19,7 +19,10 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="" />
+    <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Controller/insSentenceControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/insSentenceControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/wordbookControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/wordbookControl.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
