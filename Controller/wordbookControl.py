@@ -33,5 +33,7 @@ def wordbookControl():
         wordbook_dict["recommendSentenceId"] = recommend_lst
 
         wordbook_lst.append(wordbook_dict.copy())
+        recommend_temp = []
+        recommend_lst = []
 
     return json.dumps(wordbook_lst, ensure_ascii=False)
