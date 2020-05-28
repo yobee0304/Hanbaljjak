@@ -38,8 +38,17 @@ def wordbookControl():
                 sentence_dict["sentenceData"] = sen_entry.sentenceData
                 sentence_dict["standard"] = sen_entry.standard
 
-            wordbook_dict["recommend"] = sentence_dict.copy()
-            wordbook_lst.append(wordbook_dict.copy())
+        # wordbook 테이블에 있는 단어가 word, sentence 테이블에는 없는 경우
+        # wordbook 테이블에 있는 그대로 반환하고
+        # 추천문장은 {"senteneId"=-1, sentenceData="", standard=""} 반환
+        else:
+            sentence_dict["sentenceId"] = -1
+            sentence_dict["sentenceData"] = ""
+            sentence_dict["standard"] = ""
+            wordbook_dict["wordData"] = wordbook_entry.wordData
+
+        wordbook_dict["recommend"] = sentence_dict.copy()
+        wordbook_lst.append(wordbook_dict.copy())
         recommend_sen_id_lst = []
 
     return json.dumps(wordbook_lst, ensure_ascii=False)
