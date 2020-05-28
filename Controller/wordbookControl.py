@@ -29,16 +29,17 @@ def wordbookControl():
             else:
                 wordbook_dict["wordData"] = wordbook_entry.wordData
 
-        # 추천 문장 ID 후보 에서 랜덤으로 하나 선택
-        sentence_dict["sentenceId"] = random.choice(recommend_sen_id_lst)
-        # 선택된 sentenceId로 sentenceData, standard 가져오기
-        for sen_entry in db_session.query(Sentence).\
-                filter(Sentence.sentenceId == sentence_dict["sentenceId"]):
-            sentence_dict["sentenceData"] = sen_entry.sentenceData
-            sentence_dict["standard"] = sen_entry.standard
+        # 추천문장 후보 ID list(recommend_sen_id_lst)가 empty가 아니면 랜덤으로 하나 선택
+        if recommend_sen_id_lst:
+            sentence_dict["sentenceId"] = random.choice(recommend_sen_id_lst)
+            # 선택된 sentenceId로 sentenceData, standard 가져오기
+            for sen_entry in db_session.query(Sentence).\
+                    filter(Sentence.sentenceId == sentence_dict["sentenceId"]):
+                sentence_dict["sentenceData"] = sen_entry.sentenceData
+                sentence_dict["standard"] = sen_entry.standard
 
-        wordbook_dict["recommend"] = sentence_dict.copy()
-        wordbook_lst.append(wordbook_dict.copy())
+            wordbook_dict["recommend"] = sentence_dict.copy()
+            wordbook_lst.append(wordbook_dict.copy())
         recommend_sen_id_lst = []
 
     return json.dumps(wordbook_lst, ensure_ascii=False)
