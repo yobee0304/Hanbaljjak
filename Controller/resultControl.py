@@ -131,10 +131,12 @@ def resultControl():
         StandardSentence = Pick_sentence.standard
         sentenceData = Pick_sentence.sentenceData
 
-        # print(hannanum.morphs(sentenceData))
-        # print(hannanum.nouns(sentenceData))
-        # print(hannanum.pos(sentenceData))
-
+        # For hannanum Test
+        # print(hannanum.pos("날씨가 참 맑습니다"))
+        # print(hannanum.pos("예쁜 얼굴을 가졌구나"))
+        # print(hannanum.pos("기분이 상쾌하다"))
+        # print(hannanum.pos("오늘은 기쁜 날이니 즐기도록 하자"))
+        # print(hannanum.pos("오늘 너무 더운데?"))
 
         # 공백 인덱스 리스트 생성
         # 공백 개수는 일치
@@ -146,6 +148,7 @@ def resultControl():
         # 재시도 요청
         if (len(receiveData) != len(StandardSentence) or len(userBlankList) != len(standardBlankList)):
             return jsonify(
+                status="failure",
                 resultData=receiveData,
                 errorMessage="repeat",
             )
@@ -228,6 +231,7 @@ def resultControl():
         # 일치율 100%인 경우
         if Correct_rate == 1:
             return jsonify(
+                status="perfect",
                 resultData=receiveData,
                 score=Correct_rate,
             )
@@ -240,21 +244,58 @@ def resultControl():
         # print(Wrong_word_index_list)
 
         # 틀린 단어 리스트에 추가
-        for pos in hannanum.pos(Pick_sentence.sentenceData):
-            for pos_word in pos[0]:
-                # print(sentenceData[Wrong_word_index_list[Wrong_word_index]], pos_word)
-                if sentenceData[Wrong_word_index_list[Wrong_word_index]] == pos_word:
-                    Wrong_word_index += 1
-                    # N : 명사 / M : / P :
-                    if pos[1] == 'N' or pos[1] == 'M' or pos[1] == 'P':
-                        Wrong_word_list.append(pos)
-                        break
+        # 형태소 분석시에 달라지는 부분 해결 -> 틀린 인덱스 덩어리만 잘라서 다시 형태소 분석 -> N or P만 추가(음소 분해후, 자음이 같다)
 
-            if Wrong_word_index == len(Wrong_word_index_list):
-                break
+
+        # 변경 전
+        # for pos in hannanum.pos(Pick_sentence.sentenceData):
+        #     for pos_word in pos[0]:
+        #         if sentenceData[Wrong_word_index_list[Wrong_word_index]] == pos_word:
+        #             Wrong_word_index += 1
+        #             # N : 체언 / P : 용언
+        #             if pos[1] == 'N' or pos[1] == 'M' or pos[1] == 'P':
+        #                 Wrong_word_list.append(pos)
+        #                 break
+        #
+        #     if Wrong_word_index == len(Wrong_word_index_list):
+        #         break
 
         # print(Wrong_word_list)
 
+        # 변경 후
+        # print(Wrong_word_index_list)
+        sentenceData_split = Pick_sentence.sentenceData.split()
+        # print(sentenceData_split)
+        # 틀린 인덱스가 포함된 단어 선택
+        word_start_point = 0
+        for sentence_word in sentenceData_split:
+            word_end_point = word_start_point + len(sentence_word)-1
+
+            # print(word_start_point, word_end_point)
+
+            for wrong_index in Wrong_word_index_list:
+                if word_start_point <= wrong_index and word_end_point >= wrong_index:
+                    word_to_pos = hannanum.pos(sentence_word)
+
+                    # print(word_to_pos)
+                    wrong_word_pho_list = phonemeConvert(sentenceData[wrong_index])
+                    # print(wrong_word_pho_list)
+                    for pos in word_to_pos:
+                        #TODO 틀린 단어에 N이나 P가 여러개 들어있으면??
+                        if pos[1] == 'N' or pos[1] == 'P':
+                            for pos_word in pos[0]:
+                                pos_word_pho_list = phonemeConvert(pos_word)
+                                # print(pos_word_pho_list)
+                                if wrong_word_pho_list[0] == pos_word_pho_list[0]:
+                                    Wrong_word_list.append(pos)
+
+                    break
+
+            word_start_point += len(sentence_word)
+
+        print(Wrong_word_list)
+
+        # 틀린 글자 인덱스를 원래 문장을 기준으로 변경
         for i in userBlankList:
             for index, j in enumerate(Wrong_word_index_list):
                 if(j >= i):
@@ -293,8 +334,7 @@ def resultControl():
 
     # 결과 데이터를 모두 json으로 묶음
     return jsonify(
-        standard = Pick_sentence.standard,
-        resultData = receiveData,
+        status = "success",
         score = Correct_rate,
         recommendWord = recommend_word,
         userBlank = userBlankList,
