@@ -2,6 +2,7 @@ import json
 from models import Sentence
 from database import db_session
 
+
 # API 4
 # 유저 문장 리스트 반환
 def customerSentenceControl():
