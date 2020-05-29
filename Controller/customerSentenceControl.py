@@ -9,8 +9,8 @@ def customerSentenceControl():
     cust_sentence_lst = []
     cust_sentence_dict = {"sentenceId": 0, "sentenceData": "", "standard": ""}
 
-    # check==True인 sentenceId, senteceData, standard 반환
-    for sen in db_session.query(Sentence).order_by(Sentence.sentenceId).filter(Sentence.check == True):
+    # userCheck==True인 sentenceId, senteceData, standard 반환
+    for sen in db_session.query(Sentence).order_by(Sentence.sentenceId).filter(Sentence.userCheck == True):
         cust_sentence_dict["sentenceId"] = sen.sentenceId
         cust_sentence_dict["sentenceData"] = sen.sentenceData
         cust_sentence_dict["standard"] = sen.standard

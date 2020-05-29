@@ -8,16 +8,16 @@ class Sentence(Base):
     sentenceId = Column(Integer, primary_key=True)
     sentenceData = Column(VARCHAR(50))
     standard = Column(VARCHAR(50))
-    check = Column(Boolean, default=False)
+    userCheck = Column(Boolean, default=False)
 
-    def __init__(self, stdata, standard, check):
+    def __init__(self, stdata, standard, user_check):
         self.sentenceData = stdata
         self.standard = standard
-        self.check = check
+        self.userCheck = user_check
 
     def __repr__(self):
         return "<Sentence('%d', '%s', '%s', '%d')>" \
-               % (self.sentenceId, self.sentenceData, self.standard, self.check)
+               % (self.sentenceId, self.sentenceData, self.standard, self.userCheck)
 
 
 class Word(Base):
@@ -25,16 +25,16 @@ class Word(Base):
     wordId = Column(Integer, primary_key=True)
     sentenceId = Column(ForeignKey('sentence.sentenceId'))
     wordData = Column(CHAR(10))
-    type = Column(CHAR(10))
+    wordType = Column(CHAR(10))
 
-    def __init__(self, stid, wddata, type):
+    def __init__(self, stid, wddata, word_type):
         self.sentenceId = stid
         self.wordData = wddata
-        self.type = type
+        self.wordType = word_type
 
     def __repr__(self):
         return "<Word('%d', '%d', '%s', '%s')>" \
-               % (self.wordId, self.sentenceId, self.wordData, self.type)
+               % (self.wordId, self.sentenceId, self.wordData, self.wordType)
 
 
 class Result(Base):
@@ -60,17 +60,17 @@ class Record(Base):
     __tablename__ = 'record'
     recordId = Column(Integer, primary_key=True)
     recordData = Column(CHAR(10))
-    type = Column(CHAR(10))
+    recordType = Column(CHAR(10))
     count = Column(Integer, default=0)
 
-    def __init__(self, rcdata, type, count):
+    def __init__(self, rcdata, record_type, count):
         self.recordData = rcdata
-        self.type = type
+        self.recordType = record_type
         self.count = count
 
     def __repr__(self):
         return "<Record('%d', '%s', '%s', '%d')>" \
-               % (self.recordId, self.recordData, self.type, self.count)
+               % (self.recordId, self.recordData, self.recordType, self.count)
 
 class WordBook(Base):
     __tablename__ = 'wordbook'

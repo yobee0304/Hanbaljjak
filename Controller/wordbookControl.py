@@ -22,7 +22,7 @@ def wordbookControl():
                 filter(Word.wordData == wordbook_entry.wordData):
             recommend_sen_id_lst.append(word_entry.sentenceId)
             # 용언일때 "다" 붙이기
-            if word_entry.type == 'P':
+            if word_entry.wordType == 'P':
                 wordbook_dict["wordData"] = wordbook_entry.wordData + "다"
 
             # 체언일 때

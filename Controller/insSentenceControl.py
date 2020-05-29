@@ -55,7 +55,7 @@ def insSentenceControl():
         # 표준발음 어절을 문장으로 합침
         standard = " ".join(standard_lst)
         # print(standard)
-        # 문장 내용, 표준 발음, check를 sentence table에 insert
+        # 문장 내용, 표준 발음, userCheck를 sentence table에 insert
         ins_sen = Sentence(sentence_data, standard, True)
         db_session.add(ins_sen)
         db_session.commit()

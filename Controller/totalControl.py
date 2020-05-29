@@ -15,7 +15,7 @@ def totalControl():
 
 	# 가장 많이 틀린 음소 최대 3개와 그 타입(u/m/b)
 	for most in db_session.query(Record).order_by(Record.count.desc()).limit(3):
-		most_lst.append([most.recordData, most.type])
+		most_lst.append([most.recordData, most.recordType])
 
 	# 최근에 연습한 문장의 일치율 최대 5개
 	for practice in db_session.query(Result).order_by(Result.date).limit(5):
