@@ -5,6 +5,7 @@ from sqlalchemy.ext.declarative import declarative_base
 # 로컬 주소로 변경
 # mysql+pymysql://'id':'password'@localhost/'DB_name'
 engine = create_engine('mysql+pymysql://root:root@localhost/voice', convert_unicode=False)
+# TODO 서버 DB 코드 추가
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
 Base = declarative_base()
