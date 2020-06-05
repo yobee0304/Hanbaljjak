@@ -32,11 +32,6 @@ from google.cloud.speech_v1 import enums
 import io
 
 def sample_recognize(file_path):
-    """
-    Transcribe a short audio file using synchronous speech recognition
-    Args:
-      local_file_path Path to local audio file, e.g. /path/audio.wav
-    """
 
     client = speech_v1.SpeechClient()
 
@@ -81,8 +76,6 @@ def sample_recognize(file_path):
         return speech_to_text_results[0].transcript
     else:
         return ""
-
-###############################################################
 
 ########################## API2 ###############################
 
@@ -219,7 +212,7 @@ def resultControl():
         for type in Wrong_pho_dict:
             for pho in Wrong_pho_dict[type]:
                 # print(pho)
-                updateData = db_session.query(Record).filter(Record.type == type)\
+                updateData = db_session.query(Record).filter(Record.recordType == type)\
                                                     .filter(Record.recordData == pho).first()
                 # print(updateData.type, updateData.recordData)
                 updateData.count += Wrong_pho_dict[type][pho]
@@ -298,7 +291,7 @@ def resultControl():
 
             for random_select_word in Wrong_word_list:
                 Word_query = db_session.query(Word).filter(Word.wordData == random_select_word[0])\
-                    .filter(Word.type == random_select_word[1]).filter(Word.sentenceId != sentenceId)
+                    .filter(Word.wordType == random_select_word[1]).filter(Word.sentenceId != sentenceId)
                 Word_entry = [pq.sentenceId for pq in Word_query]
 
                 if Word_entry:
@@ -335,5 +328,3 @@ def resultControl():
     )
 
 ###############################################################
-
-

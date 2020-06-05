@@ -14,12 +14,18 @@ def totalControl():
 	recent_lst = []
 
 	# 가장 많이 틀린 음소 최대 3개와 그 타입(u/m/b)
-	for most in db_session.query(Record).order_by(Record.count.desc()).limit(3):
-		most_lst.append([most.recordData, most.type])
+	for most in db_session.query(Record).order_by(Record.count.desc()).\
+			filter(Record.count != 0).limit(3):
+		most_lst.append([most.recordData, most.recordType])
 
 	# 최근에 연습한 문장의 일치율 최대 5개
-	for practice in db_session.query(Result).order_by(Result.date).limit(5):
+	#for practice in db_session.query(Result).order_by(Result.resultId.desc()).limit(5):
+		#recent_lst.append(practice.score)
+	for practice in db_session.query(Result).order_by(Result.date.desc()).limit(5):
 		recent_lst.append(practice.score)
+		#print(practice.score)
+
+	#recent_lst.reverse()
 
 	total = {"mostPhoneme": most_lst, "recentScore": recent_lst}
 
