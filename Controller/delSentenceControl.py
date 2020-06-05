@@ -1,6 +1,6 @@
 from models import Word, Result, Sentence
 from database import db_session
-from flask import request
+from flask import request, jsonify
 
 
 # API 6
@@ -23,4 +23,6 @@ def delSentenceControl():
 
             db_session.commit()
 
-    return "delSentenceControl success"
+    return jsonify(
+        message="delSentenceControl success"
+    )

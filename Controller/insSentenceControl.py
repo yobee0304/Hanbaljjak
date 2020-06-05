@@ -1,6 +1,6 @@
 from models import Sentence, Word
 from database import db_session
-from flask import request
+from flask import request, jsonify
 import requests
 from urllib import parse
 from bs4 import BeautifulSoup
@@ -19,7 +19,9 @@ def insSentenceControl():
 
         # 문장이 중복되면 "duplicate sentence" 반환
         for sen in db_session.query(Sentence).filter(Sentence.sentenceData == sentence_data):
-            return "duplicate sentence"
+            return jsonify(
+                message="duplicate sentence"
+            )
 
         # 부산대 표준발음 변환기
         url = parse.urlparse \
@@ -42,7 +44,9 @@ def insSentenceControl():
 
             # 표준 발음으로 변환할 수 없는 경우 "sentence cannot be converted" 반환
             if bs.body == None:
-                return "sentence cannot be converted"
+                return jsonify(
+                    message="sentence cannot be converted"
+                )
 
             # 표준발음으로 변환할 수 있는 경우
             else:
@@ -73,4 +77,6 @@ def insSentenceControl():
                 db_session.commit()
                 # print(word_analyze[0])
 
-        return "insSentenceControl success"
+        return jsonify(
+            message="insSentenceControl success"
+        )

@@ -1,6 +1,6 @@
 from models import WordBook
 from database import db_session
-from flask import request
+from flask import request, jsonify
 from konlpy.tag import Hannanum
 
 
@@ -22,11 +22,15 @@ def insWordBookControl():
 
         # 중복검사
         for wd in db_session.query(WordBook).filter(WordBook.wordData == word_data):
-            return "duplicate word"
+            return jsonify(
+                message="duplicate word"
+            )
 
         # wordData를 받아서 wordbook 테이블에 단어 등록
         ins_wordbook = WordBook(word_data)
         db_session.add(ins_wordbook)
         db_session.commit()
 
-    return "insWordBookControl Success"
+    return jsonify(
+        message="insWordBookControl Success"
+    )

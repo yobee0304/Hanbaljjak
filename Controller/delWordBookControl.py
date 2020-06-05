@@ -1,6 +1,6 @@
 from models import WordBook
 from database import db_session
-from flask import request
+from flask import request, jsonify
 
 
 # API9
@@ -16,4 +16,6 @@ def delWordBookControl():
 
             db_session.commit()
 
-    return "delWordBookConrol Success"
+    return jsonify(
+        message="delWordBookConrol Success"
+    )
