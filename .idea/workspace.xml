@@ -22,7 +22,6 @@
     <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/resultControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/resultControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -166,7 +165,12 @@
       <workItem from="1590059653284" duration="2108000" />
       <workItem from="1590377186613" duration="5478000" />
       <workItem from="1590669014940" duration="195000" />
-      <workItem from="1590729327148" duration="1170000" />
+      <workItem from="1590729327148" duration="2661000" />
+      <workItem from="1590777053275" duration="95000" />
+      <workItem from="1591010031548" duration="1454000" />
+      <workItem from="1591012870588" duration="338000" />
+      <workItem from="1591068274130" duration="329000" />
+      <workItem from="1591201898296" duration="6912000" />
     </task>
     <servers />
   </component>
@@ -187,6 +191,6 @@
     </option>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Voice$Voice.coverage" NAME="Voice Coverage Results" MODIFIED="1590732638568" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Voice$Voice.coverage" NAME="Voice Coverage Results" MODIFIED="1591292900725" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

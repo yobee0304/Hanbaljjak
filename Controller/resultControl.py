@@ -31,7 +31,7 @@ from google.cloud import speech_v1
 from google.cloud.speech_v1 import enums
 import io
 
-def sample_recognize(local_file_path):
+def sample_recognize(file_path):
     """
     Transcribe a short audio file using synchronous speech recognition
     Args:
@@ -41,13 +41,13 @@ def sample_recognize(local_file_path):
     client = speech_v1.SpeechClient()
 
     # 임시 path
-    local_file_path = './uploadFile/STTtest.wav'
+    local_file_path = file_path
 
     # The language of the supplied audio
     language_code = "ko-KR"
 
     # Sample rate in Hertz of the audio data sent
-    sample_rate_hertz = 16000
+    sample_rate_hertz = 44100
 
     # 신뢰도 수준. 무조건 30개가 나오지는 않고 alternatives가 있는만큼 나옴.
     maxalt = 30
@@ -59,7 +59,7 @@ def sample_recognize(local_file_path):
         "language_code": language_code,
         "sample_rate_hertz": sample_rate_hertz,
         "encoding": encoding,
-        "audio_channel_count": 1,
+        "audio_channel_count": 2,
         "max_alternatives": maxalt
     }
     with io.open(local_file_path, "rb") as f:
@@ -68,16 +68,19 @@ def sample_recognize(local_file_path):
 
     response = client.recognize(config, audio)
 
-    i = 0
+    speech_to_text_results = []
+
     for result in response.results:
-        # First alternative is the most probable result
-        # alternative = result.alternatives[0]
-        # print(u"Transcript: {}".format(alternative.transcript))
-        # alternative2 = result.alternatives[1]
-        # print(u"Transcript: {}".format(alternative2.transcript))
-        for i in range(0, maxalt):
-            alternative = result.alternatives[i]
-            print(u"Transcript: {}".format(alternative.transcript))
+        for i in range(0, len(result.alternatives)):
+            speech_to_text_results.append(result.alternatives[i])
+
+    # 신뢰도를 기준으로 오름차순
+    speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
+
+    if len(speech_to_text_results) > 0:
+        return speech_to_text_results[0].transcript
+    else:
+        return ""
 
 ###############################################################
 
@@ -93,7 +96,7 @@ import random
 from konlpy.tag import Hannanum
 
 
-# FILE_DIRECTORY = "./uploadFile/"
+FILE_DIRECTORY = "./uploadFile/"
 #
 # # 디렉터리 없으면 생성하기
 # if not os.path.exists(FILE_DIRECTORY):
@@ -101,24 +104,27 @@ from konlpy.tag import Hannanum
 
 # API2
 def resultControl():
-
     if(request.method == 'POST'):
 
         # 클라이언트에서 sentenceId & wav file 받아옴
-        receiveData = request.form['sentenceData']
+        wav = request.files['receiveFile']
+        filename = request.form['fileName']
         sentenceId = request.form['sentenceId']
 
         # upload 디렉터리에 저장
-        # wav.save(FILE_DIRECTORY + secure_filename(wav.filename))
+        wav.save(FILE_DIRECTORY + secure_filename(wav.filename))
 
         ##### upload 디렉터리에 있는 파일을 STT로 변한
 
         # 임시 path
-        # args = easydict.EasyDict({"local_file_path": "./uploadFile/STTtest.wav"})
-        # sample_recognize(args.local_file_path)
+        args = easydict.EasyDict({"local_file_path": "./uploadFile/"+filename})
 
         # TODO Credential Error
         # print(sample_recognize(args.local_file_path))
+
+        # receiveData = sample_recognize(args.local_file_path)
+        receiveData = "날시가 참 말따"
+        print("STT result : ", receiveData)
 
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴
         Pick_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sentenceId).first()
@@ -131,13 +137,6 @@ def resultControl():
         StandardSentence = Pick_sentence.standard
         sentenceData = Pick_sentence.sentenceData
 
-        # For hannanum Test
-        # print(hannanum.pos("날씨가 참 맑습니다"))
-        # print(hannanum.pos("예쁜 얼굴을 가졌구나"))
-        # print(hannanum.pos("기분이 상쾌하다"))
-        # print(hannanum.pos("오늘은 기쁜 날이니 즐기도록 하자"))
-        # print(hannanum.pos("오늘 너무 더운데?"))
-
         # 공백 인덱스 리스트 생성
         # 공백 개수는 일치
         userBlankList = [i for i, value in enumerate(receiveData) if value == " "]
@@ -147,6 +146,8 @@ def resultControl():
         # 문자열 길이가 다르거나 공백 개수가 다르면
         # 재시도 요청
         if (len(receiveData) != len(StandardSentence) or len(userBlankList) != len(standardBlankList)):
+            os.remove("./uploadFile/"+filename)
+
             return jsonify(
                 status="failure",
                 resultData=receiveData,
@@ -230,6 +231,8 @@ def resultControl():
 
         # 일치율 100%인 경우
         if Correct_rate == 1:
+            os.remove("./uploadFile/" + filename)
+
             return jsonify(
                 status="perfect",
                 resultData=receiveData,
@@ -324,6 +327,8 @@ def resultControl():
 
                 if Word_entry:
                     recommend_word = random_select_word[0]
+                    if random_select_word[1] == 'P':
+                        recommend_word += '다'
                     random_select_setencdId = random.choice(Word_entry)
                     Recommend_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == random_select_setencdId).first()
                     recommend_OtoD['sentenceId'] = Recommend_sentence.sentenceId
@@ -331,16 +336,26 @@ def resultControl():
                     recommend_OtoD['standard'] = Recommend_sentence.standard
                     break
 
+    os.remove("./uploadFile/" + filename)
+
+    # response해줄 틀린 단어 리스트
+    wordList = []
+
+    for w in Wrong_word_list:
+        if w[1] == "P":
+            wordList.append(w[0]+"다")
+        else:
+            wordList.append(w[0])
 
     # 결과 데이터를 모두 json으로 묶음
     return jsonify(
         status = "success",
         score = Correct_rate,
-        recommendWord = recommend_word,
+        wordList = wordList,
         userBlank = userBlankList,
         standardBlank = standardBlankList,
-        recommendSentence = recommend_OtoD,
-        wrongIndex = Wrong_word_index_list
+        wrongIndex = Wrong_word_index_list,
+        resultData = receiveData
     )
 
 ###############################################################
