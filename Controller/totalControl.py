@@ -19,13 +19,13 @@ def totalControl():
 		most_lst.append([most.recordData, most.recordType])
 
 	# 최근에 연습한 문장의 일치율 최대 5개
-	#for practice in db_session.query(Result).order_by(Result.resultId.desc()).limit(5):
-		#recent_lst.append(practice.score)
-	for practice in db_session.query(Result).order_by(Result.date.desc()).limit(5):
+	for practice in db_session.query(Result).order_by(Result.resultId.desc()).limit(5):
 		recent_lst.append(practice.score)
+	#for practice in db_session.query(Result).order_by(Result.date.desc()).limit(5):
+		#recent_lst.append(practice.score)
 		#print(practice.score)
 
-	#recent_lst.reverse()
+	recent_lst.reverse()
 
 	total = {"mostPhoneme": most_lst, "recentScore": recent_lst}
 
