@@ -19,10 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/resultControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/resultControl.py" afterDir="false" />
-    </list>
+    <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -170,7 +167,7 @@
       <workItem from="1591010031548" duration="1454000" />
       <workItem from="1591012870588" duration="338000" />
       <workItem from="1591068274130" duration="329000" />
-      <workItem from="1591201898296" duration="6912000" />
+      <workItem from="1591201898296" duration="7188000" />
     </task>
     <servers />
   </component>

@@ -239,30 +239,6 @@ def resultControl():
                 score=Correct_rate,
             )
 
-        # print(Total_pho, Wrong_total_pho, Correct_rate)
-
-        Wrong_word_index = 0
-
-        # print(hannanum.pos(Pick_sentence.sentenceData))
-        # print(Wrong_word_index_list)
-
-        # 틀린 단어 리스트에 추가
-        # 형태소 분석시에 달라지는 부분 해결 -> 틀린 인덱스 덩어리만 잘라서 다시 형태소 분석 -> N or P만 추가(음소 분해후, 자음이 같다)
-
-
-        # 변경 전
-        # for pos in hannanum.pos(Pick_sentence.sentenceData):
-        #     for pos_word in pos[0]:
-        #         if sentenceData[Wrong_word_index_list[Wrong_word_index]] == pos_word:
-        #             Wrong_word_index += 1
-        #             # N : 체언 / P : 용언
-        #             if pos[1] == 'N' or pos[1] == 'M' or pos[1] == 'P':
-        #                 Wrong_word_list.append(pos)
-        #                 break
-        #
-        #     if Wrong_word_index == len(Wrong_word_index_list):
-        #         break
-
         # print(Wrong_word_list)
 
         # 변경 후
