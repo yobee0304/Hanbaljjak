@@ -115,8 +115,8 @@ def resultControl():
         # TODO Credential Error
         # print(sample_recognize(args.local_file_path))
 
-        # receiveData = sample_recognize(args.local_file_path)
-        receiveData = "날시가 참 말따"
+        receiveData = sample_recognize(args.local_file_path)
+        #receiveData = "날시가 참 말따"
         print("STT result : ", receiveData)
 
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴

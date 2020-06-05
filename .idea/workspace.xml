@@ -21,7 +21,7 @@
   <component name="ChangeListManager">
     <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/totalControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/totalControl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controller/resultControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/resultControl.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,5 +197,11 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="316" y="0" key="#totalControl" timestamp="1591339445183">
+      <screen x="0" y="0" width="1218" height="720" />
+    </state>
+    <state x="316" y="0" key="#totalControl/0.0.1218.720@0.0.1218.720" timestamp="1591339445183" />
   </component>
 </project>
