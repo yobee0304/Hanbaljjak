@@ -17,5 +17,5 @@ def delWordBookControl():
             db_session.commit()
 
     return jsonify(
-        message="delWordBookConrol Success"
+        message="delWordBookControl Success"
     )
