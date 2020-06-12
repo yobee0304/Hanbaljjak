@@ -34,7 +34,7 @@ def insWordBookControl():
 
         for wordbook_entry in db_session.query(WordBook).filter(WordBook.wordData == word_data):
             wordbook_dict["wordbookId"] = wordbook_entry.wordbookId
-            wordbook_dict["wordData"] = wordbook_entry.wordbookData
+            wordbook_dict["wordData"] = wordbook_entry.wordData
 
 
     return jsonify(
