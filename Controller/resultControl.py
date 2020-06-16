@@ -111,8 +111,7 @@ def similaritySentence(stt_results, sentence_standard):
         entry.append(speech_to_text_results[i].confidence)
         result_lst.append(entry)
 
-    #print("result_lst")
-    #print(result_lst)
+    print("STT RESULT : ", result_lst)
 
     # speech_to_text_results에서 유사도 비교 기준 뽑기
     for i in range(0, len(standard_lst)):
