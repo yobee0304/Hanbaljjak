@@ -73,9 +73,149 @@ def sample_recognize(file_path):
     speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
 
     if len(speech_to_text_results) > 0:
-        return speech_to_text_results[0].transcript
+        return speech_to_text_results
     else:
         return ""
+
+########################## 유사도 비교 알고리즘 ###############################
+from difflib import SequenceMatcher
+from urllib import parse
+from bs4 import BeautifulSoup
+import requests
+
+def similaritySentence(stt_results, sentence_standard):
+    stt_r = stt_results
+    #speech_to_text_results = stt_results
+    speech_to_text_results = []
+    standard = sentence_standard    # 문장의 표준 발음
+    result_lst = []    # stt 결과 문장을 스플릿한 결과와 confidence 저장
+    measure_lst = []   # 유사도 비교 기준 단어 리스트
+    max_similarity_word_lst = []    # 유사도가 가장 높은 word list
+    max_similarity_word = ""
+    pronounce_lst = []
+
+    for i in range(0, len(stt_r)):
+        if len(sentence_standard) == len(str(stt_r[i].transcript)):
+            speech_to_text_results.append(stt_r[i])
+
+    if len(speech_to_text_results) == 0:
+        return ""
+
+    # 표준 발음 스플릿
+    standard_lst = standard.split()
+
+    # result_lst에 stt 결과와 confidence 를
+    # [['오늘', '날씨가', '참', '맞다', 0.7228566408157349]] 와 같은 형식으로 변환
+    for i in range(0, len(speech_to_text_results)):
+        entry = (str(speech_to_text_results[i].transcript)).split()
+        entry.append(speech_to_text_results[i].confidence)
+        result_lst.append(entry)
+
+    #print("result_lst")
+    #print(result_lst)
+
+    # speech_to_text_results에서 유사도 비교 기준 뽑기
+    for i in range(0, len(standard_lst)):
+        meaure_entry = []
+
+        for j in range (0, len(result_lst)):
+            if len(standard_lst[i]) == len(result_lst[j][i]):
+                meaure_entry.append(result_lst[j][i])
+
+        measure_lst.append(meaure_entry)
+
+    #print("measure_lst")
+    #print(measure_lst)
+
+    # 단어간 유사도 * confidence 해서 결과가 가장 큰 단어만 선택
+    for i in range(0, len(measure_lst)):
+        pre_max_similarity_measure = 0
+        for j in range(0, len(measure_lst[i])):
+            for k in range(0, len(result_lst)):
+
+                similarity_measure = (SequenceMatcher(None, measure_lst[i][j],
+                                                      result_lst[k][i]).ratio()) * result_lst[k][-1]
+                if similarity_measure > pre_max_similarity_measure:
+                    max_similarity_word = result_lst[k][i]
+        max_similarity_word_lst.append(max_similarity_word)
+
+    #print(max_similarity_word_lst)
+
+    # 부산대 표준발음 변환기
+    url = parse.urlparse \
+        ("http://pronunciation.cs.pusan.ac.kr/pronunc2.asp?text1=안녕하세요&submit1=확인하기")
+    # url parse
+    qs = dict(parse.parse_qsl(url.query))
+
+    for word_data in max_similarity_word_lst:
+        qs['text1'] = word_data
+        url = url._replace(query=parse.urlencode(qs, encoding='euc-kr'))
+        new_url = parse.urlunparse(url)
+
+        # 표준발음 변환기에서 표준발음 가져오기
+        html = requests.get(new_url).content
+        bs = BeautifulSoup(html, 'html.parser')
+
+        # 표준 발음으로 변환할 수 없는 경우 원래 단어로
+        if bs.body == None:
+            pronounce_lst.append(word_data)
+
+        # 표준발음으로 변환할 수 있는 경우
+        else:
+            search = bs.find_all('td', attrs={'class': 'td2'})
+            search_standard = search[2].text[:-1]
+            # 발음이 여러개일 때 앞에 것만 가져오기
+            search_standard = search_standard.split('/')
+
+            # 원래 단어와 변환한 단어 음소 분해해서 비교
+            Total_pho = 0  # 총 음소 개수
+            Wrong_total_pho = 0  # 틀린 음소 개수
+
+            for index, word_one in enumerate(search_standard[0]):
+                StandPho = phonemeConvert(word_one)
+
+                # 글자가 일치하는 경우
+                if(word_data[index] == word_one):
+                    if(StandPho[2] == ''):
+                        Total_pho += 2
+                    else:
+                        Total_pho += 3
+
+                # 글자가 일치하지 않는 경우
+                # 음소 분해
+                else:
+                    UserPho = phonemeConvert(word_data[index])
+
+                    if (UserPho[2] == ' ' and StandPho[2] == ' '):
+                        Total_pho += 2
+                    else:
+                        Total_pho += 3
+
+                        if (UserPho[2] != StandPho[2]):
+                            Wrong_total_pho += 1
+
+                    if (UserPho[0] != StandPho[0]):
+                        Wrong_total_pho += 1
+
+                    if (UserPho[1] != StandPho[1]):
+                        Wrong_total_pho += 1
+
+                #print(Total_pho)
+                #print(Wrong_total_pho)
+
+            # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 ex) 만땅 -> 가득
+            # 원래 단어
+            if Wrong_total_pho / Total_pho > 0.4:
+                pronounce_lst.append(word_data)
+            else:
+                pronounce_lst.append(search_standard[0])
+
+    # 유사도가 가장 높은 word로 만든 sentence
+    pronounce_sentence = " ".join(pronounce_lst)
+    #print(pronounce_sentence)
+    return pronounce_sentence
+
+
 
 ########################## API2 ###############################
 
@@ -115,12 +255,13 @@ def resultControl():
         # TODO Credential Error
         # print(sample_recognize(args.local_file_path))
 
-        receiveData = sample_recognize(args.local_file_path)
-        #receiveData = "날시가 참 말따"
-        print("STT result : ", receiveData)
-
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴
         Pick_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sentenceId).first()
+
+        receiveSTTData = sample_recognize(args.local_file_path)
+        receiveData = similaritySentence(receiveSTTData, Pick_sentence.standard)
+        #receiveData = "날시가 참 말따"
+        print("STT result : ", receiveData)
 
         # print(Pick_sentence)
         ##### 분석 알고리즘
