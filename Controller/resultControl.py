@@ -146,7 +146,7 @@ def similaritySentence(stt_results, sentence_standard):
     # url parse
     qs = dict(parse.parse_qsl(url.query))
 
-    for index, word_data in enumerate(max_similarity_word_lst):
+    for standard_index, word_data in enumerate(max_similarity_word_lst):
         qs['text1'] = word_data
         url = url._replace(query=parse.urlencode(qs, encoding='euc-kr'))
         new_url = parse.urlunparse(url)
@@ -203,7 +203,7 @@ def similaritySentence(stt_results, sentence_standard):
                 #print(Wrong_total_pho)
 
 
-            if search_standard[0]==standard_lst[index]:
+            if search_standard[0]==standard_lst[standard_index]:
                 pronounce_lst.append(search_standard[0])
 
             # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 원래 단어로 ex) 만땅 -> 가득
