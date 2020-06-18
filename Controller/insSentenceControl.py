@@ -16,6 +16,7 @@ def insSentenceControl():
     if (request.method == 'POST'):
         sentence_data = request.form['sentenceData']  # 프론트에서 받은 문장Data
         standard = ""  # 표준발음
+        sentence_dict = {"sentenceId": 0, "sentenceData": "", "standard": ""}
 
         # 문장이 중복되면 "duplicate sentence" 반환
         for sen in db_session.query(Sentence).filter(Sentence.sentenceData == sentence_data):
@@ -77,6 +78,13 @@ def insSentenceControl():
                 db_session.commit()
                 # print(word_analyze[0])
 
+        for sen in db_session.query(Sentence).order_by(Sentence.sentenceId). \
+                filter(Sentence.sentenceData == sentence_data):
+            sentence_dict["sentenceId"] = sen.sentenceId
+            sentence_dict["sentenceData"] = sen.sentenceData
+            sentence_dict["standard"] = sen.standard
+
         return jsonify(
-            message="insSentenceControl success"
+            message="insSentenceControl success",
+            newSentence=sentence_dict
         )

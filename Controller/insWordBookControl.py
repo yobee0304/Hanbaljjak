@@ -19,6 +19,7 @@ or
 def insWordBookControl():
     if (request.method == 'POST'):
         word_data = request.form['wordData']
+        wordbook_dict = {"wordbookId": 0, "wordData": ""}
 
         # 중복검사
         for wd in db_session.query(WordBook).filter(WordBook.wordData == word_data):
@@ -31,6 +32,12 @@ def insWordBookControl():
         db_session.add(ins_wordbook)
         db_session.commit()
 
+        for wordbook_entry in db_session.query(WordBook).filter(WordBook.wordData == word_data):
+            wordbook_dict["wordbookId"] = wordbook_entry.wordbookId
+            wordbook_dict["wordData"] = wordbook_entry.wordData
+
+
     return jsonify(
-        message="insWordBookControl Success"
+        message="insWordBookControl Success",
+        newWordBook=wordbook_dict
     )

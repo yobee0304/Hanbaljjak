@@ -2,7 +2,7 @@ import json
 from models import WordBook, Word, Sentence
 from database import db_session
 from flask import request
-
+from konlpy.tag import Hannanum
 
 # API 7
 # wordbook 테이블에 있는 모든 wordbookId와 wordbookData, 추천 문장 object 1개 반환
@@ -20,8 +20,11 @@ def getWordbook():
 # API 7-1
 def getSentenceByWord():
     if(request.method == 'POST'):
-        word_data = request.form['wordData']
 
+        hannanum = Hannanum()
+        word_data = hannanum.pos(request.form['wordData'])[0][0]
+
+        # print(word_data)
         sentence_dict = {"sentenceId": 0, "sentenceData": "", "standard": ""}
         sentence_id_list = []
         sentence_list = []
@@ -30,7 +33,6 @@ def getSentenceByWord():
             sentence_id_list.append(wd.sentenceId)
 
         # print(sentence_id_list)
-
         for sid in sentence_id_list:
             sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sid).first()
             sentence_dict["sentenceId"] = sentence.sentenceId
