@@ -27,13 +27,13 @@ def phonemeConvert(word):
 
 ################# Googel Speech-to-Text API ###################
 
-from google.cloud import speech_v1
+from google.cloud import speech_v1p1beta1
 from google.cloud.speech_v1 import enums
 import io
 
 def sample_recognize(file_path):
 
-    client = speech_v1.SpeechClient()
+    client = speech_v1p1beta1.SpeechClient()
 
     # 임시 path
     local_file_path = file_path
@@ -47,15 +47,18 @@ def sample_recognize(file_path):
     # 신뢰도 수준. 무조건 30개가 나오지는 않고 alternatives가 있는만큼 나옴.
     maxalt = 30
 
+    # enable_word_confidence = True
+
     # Encoding of audio data sent. This sample sets this explicitly.
     # This field is optional for FLAC and WAV audio formats.
     encoding = enums.RecognitionConfig.AudioEncoding.LINEAR16
     config = {
+        # "enable_word_confidence": enable_word_confidence,
         "language_code": language_code,
         "sample_rate_hertz": sample_rate_hertz,
         "encoding": encoding,
         "audio_channel_count": 2,
-        "max_alternatives": maxalt
+        "max_alternatives": maxalt,
     }
     with io.open(local_file_path, "rb") as f:
         content = f.read()
@@ -72,6 +75,9 @@ def sample_recognize(file_path):
     # 신뢰도를 기준으로 오름차순
     speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
 
+    for i in speech_to_text_results:
+        print(i.transcript, i.confidence)
+
     if len(speech_to_text_results) > 0:
         return speech_to_text_results[0].transcript
     else:
@@ -87,6 +93,7 @@ import easydict
 import os
 import random
 from konlpy.tag import Hannanum
+from difflib import SequenceMatcher
 
 
 FILE_DIRECTORY = "./uploadFile/"
@@ -118,6 +125,8 @@ def resultControl():
         receiveData = sample_recognize(args.local_file_path)
         #receiveData = "날시가 참 말따"
         print("STT result : ", receiveData)
+
+        # print(SequenceMatcher(None, "날기가", "날기").ratio())
 
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴
         Pick_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sentenceId).first()

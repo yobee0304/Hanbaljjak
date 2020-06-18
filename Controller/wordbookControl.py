@@ -1,67 +1,41 @@
 import json
 from models import WordBook, Word, Sentence
 from database import db_session
-import random
+from flask import request
 
 
 # API 7
 # wordbook 테이블에 있는 모든 wordbookId와 wordbookData, 추천 문장 object 1개 반환
-def wordbookControl():
-    wordbook_lst = []    # wordbookId, wordbookData, 추천 문장 object 저장
-    sentence_dict_lst = []
-    recommend_sen_id_lst = []    # 추천 문장 후보 ID 저장
-    sentence_dict = {"sentenceId" : 0, "sentenceData" : "", "standard" : ""}
-    wordbook_dict = {"wordbookId" : 0, "wordData" : "", "recommend" : sentence_dict_lst}
+def getWordbook():
+    word_lst = []
+    word_dict = {"wordbookId": 0, "wordData": ""}
 
-    # wordbook 테이블에서 wordbookId와 wordData 가져오기
-    for wordbook_entry in db_session.query(WordBook).order_by(WordBook.wordbookId):
-        wordbook_dict["wordbookId"] = wordbook_entry.wordbookId
+    for wd in db_session.query(WordBook).order_by(WordBook.wordbookId):
+        word_dict["wordbookId"] = wd.wordbookId
+        word_dict["wordData"] = wd.wordData
+        word_lst.append(word_dict.copy())
 
-        # wordData가 같은 sentenceId(=추천 문장 후보 ID) 가져오기
-        for word_entry in db_session.query(Word).\
-                filter(Word.wordData == wordbook_entry.wordData):
-            recommend_sen_id_lst.append(word_entry.sentenceId)
-            # 용언일때 "다" 붙이기
-            if word_entry.wordType == 'P':
-                wordbook_dict["wordData"] = wordbook_entry.wordData + "다"
+    return json.dumps(word_lst, ensure_ascii=False)
 
-            # 체언일 때
-            else:
-                wordbook_dict["wordData"] = wordbook_entry.wordData
+# API 7-1
+def getSentenceByWord():
+    if(request.method == 'POST'):
+        word_data = request.form['wordData']
 
-        # 추천문장 후보 ID list(recommend_sen_id_lst)가 empty가 아니면 랜덤으로 하나 선택
-        """
-        if recommend_sen_id_lst:
-            sentence_dict["sentenceId"] = random.choice(recommend_sen_id_lst)
-            # 선택된 sentenceId로 sentenceData, standard 가져오기
-            for sen_entry in db_session.query(Sentence).\
-                    filter(Sentence.sentenceId == sentence_dict["sentenceId"]):
-                sentence_dict["sentenceData"] = sen_entry.sentenceData
-                sentence_dict["standard"] = sen_entry.standard
-        """
-        # 단어장의 단어가 포함된 모든 추천 문장 반환
-        if recommend_sen_id_lst:
-            for sen_id_entry in recommend_sen_id_lst:
-                for sen_entry in db_session.query(Sentence).\
-                        filter(Sentence.sentenceId == sen_id_entry):
-                    sentence_dict["sentenceId"] = sen_id_entry
-                    sentence_dict["sentenceData"] = sen_entry.sentenceData
-                    sentence_dict["standard"] = sen_entry.standard
-                sentence_dict_lst.append(sentence_dict.copy())
+        sentence_dict = {"sentenceId": 0, "sentenceData": "", "standard": ""}
+        sentence_id_list = []
+        sentence_list = []
 
-        # wordbook 테이블에 있는 단어가 word, sentence 테이블에는 없는 경우
-        # wordbook 테이블에 있는 그대로 반환하고
-        # 추천문장은 {"senteneId"=-1, sentenceData="", standard=""} 반환
-        else:
-            sentence_dict["sentenceId"] = -1
-            sentence_dict["sentenceData"] = ""
-            sentence_dict["standard"] = ""
-            wordbook_dict["wordData"] = wordbook_entry.wordData
-            sentence_dict_lst.append(sentence_dict.copy())
+        for wd in db_session.query(Word).order_by(Word.wordId).filter(Word.wordData == word_data):
+            sentence_id_list.append(wd.sentenceId)
 
-        wordbook_dict["recommend"] = sentence_dict_lst.copy()
-        wordbook_lst.append(wordbook_dict.copy())
-        recommend_sen_id_lst = []
-        sentence_dict_lst = []
+        # print(sentence_id_list)
 
-    return json.dumps(wordbook_lst, ensure_ascii=False)
+        for sid in sentence_id_list:
+            sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sid).first()
+            sentence_dict["sentenceId"] = sentence.sentenceId
+            sentence_dict["sentenceData"] = sentence.sentenceData
+            sentence_dict["standard"] = sentence.standard
+            sentence_list.append(sentence_dict.copy())
+
+        return json.dumps(sentence_list, ensure_ascii=False)
