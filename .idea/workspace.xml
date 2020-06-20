@@ -21,13 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="01e3fee4-e2e6-4c4b-88d4-0efc9b2d2040" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/delWordBookControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/delWordBookControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/insSentenceControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/insSentenceControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/insWordBookControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/insWordBookControl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controller/resultControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/resultControl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Controller/wordbookControl.py" beforeDir="false" afterPath="$PROJECT_DIR$/Controller/wordbookControl.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -75,18 +70,6 @@
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/Controller" />
     </key>
-  </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
   </component>
   <component name="RunManager" selected="Python.app">
     <configuration name="app" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
@@ -235,13 +218,12 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State>
-              <option name="COLUMN_ORDER" />
-            </State>
+            <State />
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="316" y="0" key="#totalControl" timestamp="1591339445183">
@@ -268,8 +250,5 @@
       <screen x="0" y="0" width="1218" height="720" />
     </state>
     <state x="111" y="5" key="SettingsEditor/0.0.1218.720/0.-1080.1920.1050@0.0.1218.720" timestamp="1591688058859" />
-  </component>
-  <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Voice$app.coverage" NAME="app Coverage Results" MODIFIED="1592480560612" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
