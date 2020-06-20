@@ -372,10 +372,10 @@ def resultControl():
                 db_session.commit()
 
 
-        """
+
         # 일치율
         Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
-
+        """
         # 일치율 100%인 경우
         if Correct_rate == 1:
             os.remove("./uploadFile/" + filename)
@@ -434,8 +434,6 @@ def resultControl():
         db_session.add(resultData)
         db_session.commit()
 
-        # 일치율
-        Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
 
         # 일치율 100%인 경우
         if Correct_rate == 1:
