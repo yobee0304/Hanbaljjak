@@ -360,18 +360,6 @@ def resultControl():
 
         # print(Wrong_pho_dict)
 
-        # 일치율
-        Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
-
-        # 일치율 100%인 경우
-        if Correct_rate == 1:
-            os.remove("./uploadFile/" + filename)
-
-            return jsonify(
-                status="perfect",
-                resultData=receiveData,
-                score=Correct_rate,
-            )
 
         ######### 틀린 음소 record 테이블에 count 올림 -> TEST SUCCESS
         for type in Wrong_pho_dict:
@@ -382,6 +370,7 @@ def resultControl():
                 # print(updateData.type, updateData.recordData)
                 updateData.count += Wrong_pho_dict[type][pho]
                 db_session.commit()
+
 
         """
         # 일치율
@@ -444,6 +433,19 @@ def resultControl():
         resultData = Result(stid=sentenceId, rsdata=receiveData, score=Correct_rate)
         db_session.add(resultData)
         db_session.commit()
+
+        # 일치율
+        Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
+
+        # 일치율 100%인 경우
+        if Correct_rate == 1:
+            os.remove("./uploadFile/" + filename)
+
+            return jsonify(
+                status="perfect",
+                resultData=receiveData,
+                score=Correct_rate,
+            )
 
         ######## 가장 많이 틀린 단어에 대한 추천 문장 1개
 
