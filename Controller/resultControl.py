@@ -3,25 +3,28 @@
 # 초성 리스트. 00 ~ 18
 CHOSUNG_LIST = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
 # 중성 리스트. 00 ~ 20
-JUNGSUNG_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
+JUNGSUNG_LIST = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ',
+                 'ㅣ']
 # 종성 리스트. 00 ~ 27 + 1(1개 없음)
-JONGSUNG_LIST = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+JONGSUNG_LIST = [' ', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ',
+                 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+
 
 def phonemeConvert(word):
-
     pho_lst = []
 
     ## 영어인 경우 구분해서 작성함.
-    if '가'<=word<='힣':            ## 588개 마다 초성이 바뀜.
+    if '가' <= word <= '힣':  ## 588개 마다 초성이 바뀜.
         up = (ord(word) - ord('가')) // 588
         ## 중성은 총 28가지 종류
-        mid = ((ord(word) - ord('가')) - (588*up)) // 28
-        bottom = (ord(word) - ord('가')) - (588*up) - 28*mid
+        mid = ((ord(word) - ord('가')) - (588 * up)) // 28
+        bottom = (ord(word) - ord('가')) - (588 * up) - 28 * mid
         pho_lst = [CHOSUNG_LIST[up], JUNGSUNG_LIST[mid], JONGSUNG_LIST[bottom]]
     else:
         pho_lst.append([word])
 
     return pho_lst
+
 
 ###############################################################
 
@@ -31,8 +34,8 @@ from google.cloud import speech_v1p1beta1
 from google.cloud.speech_v1 import enums
 import io
 
-def sample_recognize(file_path):
 
+def sample_recognize(file_path):
     client = speech_v1p1beta1.SpeechClient()
 
     # 임시 path
@@ -82,7 +85,7 @@ def sample_recognize(file_path):
         return speech_to_text_results
     else:
         return ""
-		
+
 
 ########################## 유사도 비교 알고리즘 ###############################
 from difflib import SequenceMatcher
@@ -91,35 +94,36 @@ from bs4 import BeautifulSoup
 import requests
 import re
 
+
 def hasNumberAlphabet(inputString):
-	return bool(re.search(r'[a-zA-Z0-9]', inputString))
+    return bool(re.search(r'[a-zA-Z0-9]', inputString))
 
 
 def similaritySentence(stt_results, sentence_standard):
     stt_r = stt_results
-    #speech_to_text_results = stt_results
-    speech_to_text_results = []		# stt 결과 중 표준발음과 길이 같은것만 저장.
-    standard = sentence_standard    # 문장의 표준 발음
-    result_lst = []    # stt 결과 문장을 스플릿한 결과와 confidence 저장
-    measure_lst = []   # 유사도 비교 기준 단어 리스트
-    max_similarity_word_lst = []    # 유사도가 가장 높은 word list
+    # speech_to_text_results = stt_results
+    speech_to_text_results = []  # stt 결과 중 표준발음과 길이 같은것만 저장.
+    standard = sentence_standard  # 문장의 표준 발음
+    result_lst = []  # stt 결과 문장을 스플릿한 결과와 confidence 저장
+    measure_lst = []  # 유사도 비교 기준 단어 리스트
+    max_similarity_word_lst = []  # 유사도가 가장 높은 word list
     max_similarity_word = ""
     pronounce_lst = []
-	
-	# 표준 발음 스플릿
+
+    # 표준 발음 스플릿
     standard_lst = standard.split()
 
-	# stt 결과 중 표준발음과 길이 다른 것, 숫자, 영어 들어가는 것 제외.
+    # stt 결과 중 표준발음과 길이 다른 것, 숫자, 영어 들어가는 것 제외.
     for i in range(0, len(stt_r)):
-		stt_r_lst = str(stt_r[i].transcript).split(" ")
-		word_len_same = True
-        if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(stt_r[i].transcript):
-			for word_index in range(0, len(standard_lst)):
-				if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
-					word_len_same = False
-					break
-			if word_len_same:
-				speech_to_text_results.append(stt_r[i])
+        stt_r_lst = str(stt_r[i].transcript).split(" ")
+        word_len_same = True
+    if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(stt_r[i].transcript):
+        for word_index in range(0, len(standard_lst)):
+            if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
+                word_len_same = False
+                break
+        if word_len_same:
+            speech_to_text_results.append(stt_r[i])
 
     if len(speech_to_text_results) == 0:
         return ""
@@ -130,8 +134,8 @@ def similaritySentence(stt_results, sentence_standard):
         entry = (str(speech_to_text_results[i].transcript)).split()
         entry.append(speech_to_text_results[i].confidence)
         result_lst.append(entry)
-    
-	print("result_lst :")
+
+    print("result_lst :")
     for i in range(0, len(result_lst)):
         print(result_lst[i])
     print()
@@ -141,13 +145,13 @@ def similaritySentence(stt_results, sentence_standard):
         measure_entry = {}
         measure_entry = set()
 
-        for j in range (0, len(result_lst)):
+        for j in range(0, len(result_lst)):
             if len(standard_lst[i]) == len(result_lst[j][i]):
                 measure_entry.add(result_lst[j][i])
 
         measure_lst.append(list(measure_entry))
 
-    #print("measure_lst : ",measure_lst)
+    # print("measure_lst : ",measure_lst)
 
     for i in range(0, len(measure_lst)):
         pre_max_similarity_measure = 0
@@ -188,7 +192,7 @@ def similaritySentence(stt_results, sentence_standard):
                             Wrong_total_pho += 1
 
                     word_score = word_score + 1 - (Wrong_total_pho / Total_pho) * result_lst[j][-1]
-                #print(word_score)
+                # print(word_score)
             similarity_measure = word_score
             if similarity_measure > pre_max_similarity_measure:
                 max_similarity_word = result_lst[j][i]
@@ -221,61 +225,61 @@ def similaritySentence(stt_results, sentence_standard):
             search_standard = search[2].text[:-1]
             # 발음이 여러개일 때 앞에 것만 가져오기
             search_standard = search_standard.split('/')
-			if word_data == "이":
-				search_standard[0] = "이"
+            if word_data == "이":
+                search_standard[0] = "이"
 
-            # 원래 단어와 변환한 단어 음소 분해해서 비교
-            Total_pho = 0  # 총 음소 개수
-            Wrong_total_pho = 0  # 틀린 음소 개수
+        # 원래 단어와 변환한 단어 음소 분해해서 비교
+        Total_pho = 0  # 총 음소 개수
+        Wrong_total_pho = 0  # 틀린 음소 개수
 
-            for index, word_one in enumerate(search_standard[0]):
-                StandPho = phonemeConvert(word_one)
+        for index, word_one in enumerate(search_standard[0]):
+            StandPho = phonemeConvert(word_one)
 
-                # 글자가 일치하는 경우
-                if(word_data[index] == word_one):
-                    if(StandPho[2] == ''):
-                        Total_pho += 2
-                    else:
-                        Total_pho += 3
-
-                # 글자가 일치하지 않는 경우
-                # 음소 분해
+            # 글자가 일치하는 경우
+            if (word_data[index] == word_one):
+                if (StandPho[2] == ''):
+                    Total_pho += 2
                 else:
-                    UserPho = phonemeConvert(word_data[index])
+                    Total_pho += 3
 
-                    if (UserPho[2] == ' ' and StandPho[2] == ' '):
-                        Total_pho += 2
-                    else:
-                        Total_pho += 3
-
-                        if (UserPho[2] != StandPho[2]):
-                            Wrong_total_pho += 1
-
-                    if (UserPho[0] != StandPho[0]):
-                        Wrong_total_pho += 1
-
-                    if (UserPho[1] != StandPho[1]):
-                        Wrong_total_pho += 1
-
-                #print(Total_pho)
-                #print(Wrong_total_pho)
-
-            if search_standard[0]==standard_lst[standard_index]:
-                pronounce_lst.append(search_standard[0])
-
-            # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 원래 단어로 ex) 만땅 -> 가득
-            elif Wrong_total_pho / Total_pho > 0.3:
-                #print(Wrong_total_pho / Total_pho)
-                pronounce_lst.append(word_data)
+            # 글자가 일치하지 않는 경우
+            # 음소 분해
             else:
-                pronounce_lst.append(search_standard[0])
+                UserPho = phonemeConvert(word_data[index])
+
+                if (UserPho[2] == ' ' and StandPho[2] == ' '):
+                    Total_pho += 2
+                else:
+                    Total_pho += 3
+
+                    if (UserPho[2] != StandPho[2]):
+                        Wrong_total_pho += 1
+
+                if (UserPho[0] != StandPho[0]):
+                    Wrong_total_pho += 1
+
+                if (UserPho[1] != StandPho[1]):
+                    Wrong_total_pho += 1
+
+            # print(Total_pho)
+            # print(Wrong_total_pho)
+
+        if search_standard[0] == standard_lst[standard_index]:
+            pronounce_lst.append(search_standard[0])
+
+        # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 원래 단어로 ex) 만땅 -> 가득
+        elif Wrong_total_pho / Total_pho > 0.3:
+            # print(Wrong_total_pho / Total_pho)
+            pronounce_lst.append(word_data)
+        else:
+            pronounce_lst.append(search_standard[0])
+
 
     # 유사도가 가장 높은 word로 만든 sentence
     pronounce_sentence = " ".join(pronounce_lst)
     print("최종 결과 : ", pronounce_sentence)
+
     return pronounce_sentence
-
-
 
 ########################## API2 ###############################
 
@@ -289,8 +293,9 @@ import random
 from konlpy.tag import Hannanum
 from difflib import SequenceMatcher
 
-
 FILE_DIRECTORY = "./uploadFile/"
+
+
 #
 # # 디렉터리 없으면 생성하기
 # if not os.path.exists(FILE_DIRECTORY):
@@ -298,7 +303,7 @@ FILE_DIRECTORY = "./uploadFile/"
 
 # API2
 def resultControl():
-    if(request.method == 'POST'):
+    if (request.method == 'POST'):
 
         # 클라이언트에서 sentenceId & wav file 받아옴
         wav = request.files['receiveFile']
@@ -311,18 +316,17 @@ def resultControl():
         ##### upload 디렉터리에 있는 파일을 STT로 변한
 
         # 임시 path
-        args = easydict.EasyDict({"local_file_path": "./uploadFile/"+filename})
+        args = easydict.EasyDict({"local_file_path": "./uploadFile/" + filename})
 
         # TODO Credential Error
         # print(sample_recognize(args.local_file_path))
-
 
         # sentenceId를 통해 DB에서 표준 발음 텍스트 가져옴
         Pick_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == sentenceId).first()
 
         receiveSTTData = sample_recognize(args.local_file_path)
         receiveData = similaritySentence(receiveSTTData, Pick_sentence.standard)
-        #receiveData = "날시가 참 말따"
+        # receiveData = "날시가 참 말따"
         print("STT result : ", receiveData)
 
         # print(Pick_sentence)
@@ -342,7 +346,7 @@ def resultControl():
         # 문자열 길이가 다르거나 공백 개수가 다르면
         # 재시도 요청
         if (len(receiveData) != len(StandardSentence) or len(userBlankList) != len(standardBlankList)):
-            os.remove("./uploadFile/"+filename)
+            os.remove("./uploadFile/" + filename)
 
             return jsonify(
                 status="failure",
@@ -358,21 +362,20 @@ def resultControl():
         # print(UserSentence)
         # print(StandardSentence)
 
-        Total_pho = 0           # 총 음소 개수
-        Wrong_total_pho = 0     # 틀린 음소 개수
-        Wrong_word_index_list = []   # 틀린 글자 데이터가 들어있는 리스트
-        Wrong_word_list = []         # 틀린 단어 데이터가 들어있는 리스트
-        Wrong_pho_dict = {'u' : {},
-                          'm' : {},     # 틀린 음소가 저장되는 딕셔너리
-                          'b' : {}}     # u : 자음, m : 모음, b : 받침
-
+        Total_pho = 0  # 총 음소 개수
+        Wrong_total_pho = 0  # 틀린 음소 개수
+        Wrong_word_index_list = []  # 틀린 글자 데이터가 들어있는 리스트
+        Wrong_word_list = []  # 틀린 단어 데이터가 들어있는 리스트
+        Wrong_pho_dict = {'u': {},
+                          'm': {},  # 틀린 음소가 저장되는 딕셔너리
+                          'b': {}}  # u : 자음, m : 모음, b : 받침
 
         for index, standard in enumerate(StandardSentence):
             StandPho = phonemeConvert(standard)
 
             # 글자가 일치하는 경우
-            if(UserSentence[index] == standard):
-                if(StandPho[2] == ' '):
+            if (UserSentence[index] == standard):
+                if (StandPho[2] == ' '):
                     Total_pho += 2
                 else:
                     Total_pho += 3
@@ -383,12 +386,12 @@ def resultControl():
                 UserPho = phonemeConvert(UserSentence[index])
                 SentencePho = phonemeConvert(sentenceData[index])
 
-                if(UserPho[2] == ' ' and StandPho[2] == ' '):
+                if (UserPho[2] == ' ' and StandPho[2] == ' '):
                     Total_pho += 2
                 else:
                     Total_pho += 3
 
-                    if(UserPho[2] != StandPho[2]):
+                    if (UserPho[2] != StandPho[2]):
                         Wrong_total_pho += 1
                         if StandPho[2] in Wrong_pho_dict['b']:
                             Wrong_pho_dict['b'][SentencePho[2]] += 1
@@ -411,18 +414,15 @@ def resultControl():
 
         # print(Wrong_pho_dict)
 
-
         ######### 틀린 음소 record 테이블에 count 올림 -> TEST SUCCESS
         for type in Wrong_pho_dict:
             for pho in Wrong_pho_dict[type]:
                 # print(pho)
-                updateData = db_session.query(Record).filter(Record.recordType == type)\
-                                                    .filter(Record.recordData == pho).first()
+                updateData = db_session.query(Record).filter(Record.recordType == type) \
+                    .filter(Record.recordData == pho).first()
                 # print(updateData.type, updateData.recordData)
                 updateData.count += Wrong_pho_dict[type][pho]
                 db_session.commit()
-
-
 
         # 일치율
         Correct_rate = round(1 - (Wrong_total_pho / Total_pho), 4)
@@ -446,7 +446,7 @@ def resultControl():
         # 틀린 인덱스가 포함된 단어 선택
         word_start_point = 0
         for sentence_word in sentenceData_split:
-            word_end_point = word_start_point + len(sentence_word)-1
+            word_end_point = word_start_point + len(sentence_word) - 1
 
             # print(word_start_point, word_end_point)
 
@@ -458,7 +458,7 @@ def resultControl():
                     wrong_word_pho_list = phonemeConvert(sentenceData[wrong_index])
                     # print(wrong_word_pho_list)
                     for pos in word_to_pos:
-                        #TODO 틀린 단어에 N이나 P가 여러개 들어있으면??
+                        # TODO 틀린 단어에 N이나 P가 여러개 들어있으면??
                         if pos[1] == 'N' or pos[1] == 'P':
                             for pos_word in pos[0]:
                                 pos_word_pho_list = phonemeConvert(pos_word)
@@ -475,7 +475,7 @@ def resultControl():
         # 틀린 글자 인덱스를 원래 문장을 기준으로 변경
         for i in userBlankList:
             for index, j in enumerate(Wrong_word_index_list):
-                if(j >= i):
+                if (j >= i):
                     Wrong_word_index_list[index] += 1
 
         # print(Wrong_word_index)
@@ -484,7 +484,6 @@ def resultControl():
         resultData = Result(stid=sentenceId, rsdata=receiveData, score=Correct_rate)
         db_session.add(resultData)
         db_session.commit()
-
 
         # 일치율 100%인 경우
         if Correct_rate == 1:
@@ -506,7 +505,7 @@ def resultControl():
             random.shuffle(Wrong_word_list)
 
             for random_select_word in Wrong_word_list:
-                Word_query = db_session.query(Word).filter(Word.wordData == random_select_word[0])\
+                Word_query = db_session.query(Word).filter(Word.wordData == random_select_word[0]) \
                     .filter(Word.wordType == random_select_word[1]).filter(Word.sentenceId != sentenceId)
                 Word_entry = [pq.sentenceId for pq in Word_query]
 
@@ -515,7 +514,8 @@ def resultControl():
                     if random_select_word[1] == 'P':
                         recommend_word += '다'
                     random_select_setencdId = random.choice(Word_entry)
-                    Recommend_sentence = db_session.query(Sentence).filter(Sentence.sentenceId == random_select_setencdId).first()
+                    Recommend_sentence = db_session.query(Sentence).filter(
+                        Sentence.sentenceId == random_select_setencdId).first()
                     recommend_OtoD['sentenceId'] = Recommend_sentence.sentenceId
                     recommend_OtoD['sentenceData'] = Recommend_sentence.sentenceData
                     recommend_OtoD['standard'] = Recommend_sentence.standard
@@ -528,19 +528,19 @@ def resultControl():
 
     for w in Wrong_word_list:
         if w[1] == "P":
-            wordList.append(w[0]+"다")
+            wordList.append(w[0] + "다")
         else:
             wordList.append(w[0])
 
     # 결과 데이터를 모두 json으로 묶음
     return jsonify(
-        status = "success",
-        score = Correct_rate,
-        wordList = wordList,
-        userBlank = userBlankList,
-        standardBlank = standardBlankList,
-        wrongIndex = Wrong_word_index_list,
-        resultData = receiveData
+        status="success",
+        score=Correct_rate,
+        wordList=wordList,
+        userBlank=userBlankList,
+        standardBlank=standardBlankList,
+        wrongIndex=Wrong_word_index_list,
+        resultData=receiveData
     )
 
 ###############################################################
