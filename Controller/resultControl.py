@@ -107,6 +107,9 @@ def similaritySentence(stt_results, sentence_standard):
     #     if len(sentence_standard) == len(str(stt_r[i].transcript)):
     #         speech_to_text_results.append(stt_r[i])
 
+    # 표준 발음 스플릿
+    standard_lst = standard.split()
+
     # stt 결과 중 표준발음과 길이 다른 것, 숫자, 영어 들어가는 것 제외.
     for i in range(0, len(stt_r)):
         stt_r_lst = str(stt_r[i].transcript).split(" ")
@@ -121,9 +124,6 @@ def similaritySentence(stt_results, sentence_standard):
 
     if len(speech_to_text_results) == 0:
         return ""
-
-    # 표준 발음 스플릿
-    standard_lst = standard.split()
 
     # result_lst에 stt 결과와 confidence 를
     # [['오늘', '날씨가', '참', '맞다', 0.7228566408157349]] 와 같은 형식으로 변환
