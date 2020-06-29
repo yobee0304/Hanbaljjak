@@ -61,6 +61,8 @@ def insSentenceControl():
                 search_standard = search[2].text[:-1]
                 # 발음이 여러개일 때 앞에 것만 가져오기
                 search_standard = search_standard.split('/')
+				if sen_data == "이":
+					search_standard[0] = "이"
                 standard_lst.append(search_standard[0])  # 표준발음
 
         # 표준발음 어절을 문장으로 합침
