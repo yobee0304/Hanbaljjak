@@ -75,6 +75,7 @@ def sample_recognize(file_path):
     # 신뢰도를 기준으로 오름차순
     speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
 
+    print("Original STT RESULT : ")
     for i in speech_to_text_results:
         print(i.transcript, i.confidence)
 
