@@ -67,16 +67,16 @@ def sample_recognize(file_path):
     response = client.recognize(config, audio)
 
     speech_to_text_results = []
-
     for result in response.results:
         for i in range(0, len(result.alternatives)):
             speech_to_text_results.append(result.alternatives[i])
 
     # 신뢰도를 기준으로 오름차순
     speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
-
+    print("RAW STT RESULT :")
     for i in speech_to_text_results:
         print(i.transcript, i.confidence)
+    print()
 
     if len(speech_to_text_results) > 0:
         return speech_to_text_results
@@ -115,7 +115,7 @@ def similaritySentence(stt_results, sentence_standard):
         entry = (str(speech_to_text_results[i].transcript)).split()
         entry.append(speech_to_text_results[i].confidence)
         result_lst.append(entry)
-
+    print("result_lst :")
     for i in range(0, len(result_lst)):
         print(result_lst[i])
     print()
@@ -178,7 +178,7 @@ def similaritySentence(stt_results, sentence_standard):
                 max_similarity_word = result_lst[j][i]
         max_similarity_word_lst.append(max_similarity_word)
 
-    print("최종 결과 : ", max_similarity_word_lst)
+    print("유사도 선택 결과 : ", max_similarity_word_lst)
 
     # 부산대 표준발음 변환기
     url = parse.urlparse \
