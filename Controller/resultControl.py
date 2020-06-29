@@ -82,32 +82,47 @@ def sample_recognize(file_path):
         return speech_to_text_results
     else:
         return ""
+		
+
 ########################## 유사도 비교 알고리즘 ###############################
 from difflib import SequenceMatcher
 from urllib import parse
 from bs4 import BeautifulSoup
 import requests
+import re
+
+def hasNumberAlphabet(inputString):
+	return bool(re.search(r'[a-zA-Z0-9]', inputString)
+	
 
 def similaritySentence(stt_results, sentence_standard):
     stt_r = stt_results
     #speech_to_text_results = stt_results
-    speech_to_text_results = []
+    speech_to_text_results = []		# stt 결과 중 표준발음과 길이 같은것만 저장.
     standard = sentence_standard    # 문장의 표준 발음
     result_lst = []    # stt 결과 문장을 스플릿한 결과와 confidence 저장
     measure_lst = []   # 유사도 비교 기준 단어 리스트
     max_similarity_word_lst = []    # 유사도가 가장 높은 word list
     max_similarity_word = ""
     pronounce_lst = []
+	
+	# 표준 발음 스플릿
+    standard_lst = standard.split()
 
+	# stt 결과 중 표준발음과 길이 다른 것, 숫자, 영어 들어가는 것 제외.
     for i in range(0, len(stt_r)):
-        if len(sentence_standard) == len(str(stt_r[i].transcript)):
-            speech_to_text_results.append(stt_r[i])
+		stt_r_lst = str(stt_r[i].transcript).split()
+		word_len_same = True
+        if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(str_r[i].transcript):
+			for word_index in range(0, len(standard_lst):
+				if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
+					word_len_same = False
+					break
+			if word_len_same:
+				speech_to_text_results.append(stt_r[i])
 
     if len(speech_to_text_results) == 0:
         return ""
-
-    # 표준 발음 스플릿
-    standard_lst = standard.split()
 
     # result_lst에 stt 결과와 confidence 를
     # [['오늘', '날씨가', '참', '맞다', 0.7228566408157349]] 와 같은 형식으로 변환
@@ -115,7 +130,8 @@ def similaritySentence(stt_results, sentence_standard):
         entry = (str(speech_to_text_results[i].transcript)).split()
         entry.append(speech_to_text_results[i].confidence)
         result_lst.append(entry)
-    print("result_lst :")
+    
+	print("result_lst :")
     for i in range(0, len(result_lst)):
         print(result_lst[i])
     print()
@@ -205,6 +221,8 @@ def similaritySentence(stt_results, sentence_standard):
             search_standard = search[2].text[:-1]
             # 발음이 여러개일 때 앞에 것만 가져오기
             search_standard = search_standard.split('/')
+			if word_data == "이":
+				search_standard[0] = "이"
 
             # 원래 단어와 변환한 단어 음소 분해해서 비교
             Total_pho = 0  # 총 음소 개수
@@ -246,7 +264,7 @@ def similaritySentence(stt_results, sentence_standard):
                 pronounce_lst.append(search_standard[0])
 
             # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 원래 단어로 ex) 만땅 -> 가득
-            elif Wrong_total_pho / Total_pho > 0.4:
+            elif Wrong_total_pho / Total_pho > 0.3:
                 #print(Wrong_total_pho / Total_pho)
                 pronounce_lst.append(word_data)
             else:
