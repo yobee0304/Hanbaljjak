@@ -82,7 +82,6 @@ def sample_recognize(file_path):
         return speech_to_text_results
     else:
         return ""
-
 ########################## 유사도 비교 알고리즘 ###############################
 from difflib import SequenceMatcher
 from urllib import parse
@@ -117,34 +116,69 @@ def similaritySentence(stt_results, sentence_standard):
         entry.append(speech_to_text_results[i].confidence)
         result_lst.append(entry)
 
-    print("STT RESULT : ", result_lst)
+    for i in range(0, len(result_lst)):
+        print(result_lst[i])
+    print()
 
     # speech_to_text_results에서 유사도 비교 기준 뽑기
     for i in range(0, len(standard_lst)):
-        meaure_entry = []
+        measure_entry = {}
+        measure_entry = set()
 
         for j in range (0, len(result_lst)):
             if len(standard_lst[i]) == len(result_lst[j][i]):
-                meaure_entry.append(result_lst[j][i])
+                measure_entry.add(result_lst[j][i])
 
-        measure_lst.append(meaure_entry)
+        measure_lst.append(list(measure_entry))
 
-    #print("measure_lst")
-    #print(measure_lst)
+    #print("measure_lst : ",measure_lst)
 
-    # 단어간 유사도 * confidence 해서 결과가 가장 큰 단어만 선택
     for i in range(0, len(measure_lst)):
         pre_max_similarity_measure = 0
-        for j in range(0, len(measure_lst[i])):
-            for k in range(0, len(result_lst)):
+        for j in range(0, len(result_lst)):
+            word_score = 0
+            for k in range(0, len(measure_lst[i])):
+                # 원래 단어와 변환한 단어 음소 분해해서 비교
+                Total_pho = 0  # 총 음소 개수
+                Wrong_total_pho = 0  # 틀린 음소 개수
 
-                similarity_measure = (SequenceMatcher(None, measure_lst[i][j],
-                                                      result_lst[k][i]).ratio()) * result_lst[k][-1]
-                if similarity_measure > pre_max_similarity_measure:
-                    max_similarity_word = result_lst[k][i]
+                for index, word_one in enumerate(measure_lst[i][k]):
+                    StandPho = phonemeConvert(word_one)
+
+                    # 글자가 일치하는 경우
+                    if (result_lst[j][i][index] == word_one):
+                        if (StandPho[2] == ''):
+                            Total_pho += 2
+                        else:
+                            Total_pho += 3
+
+                    # 글자가 일치하지 않는 경우
+                    # 음소 분해
+                    else:
+                        UserPho = phonemeConvert(result_lst[j][i][index])
+
+                        if (UserPho[2] == ' ' and StandPho[2] == ' '):
+                            Total_pho += 2
+                        else:
+                            Total_pho += 3
+
+                            if (UserPho[2] != StandPho[2]):
+                                Wrong_total_pho += 1
+
+                        if (UserPho[0] != StandPho[0]):
+                            Wrong_total_pho += 1
+
+                        if (UserPho[1] != StandPho[1]):
+                            Wrong_total_pho += 1
+
+                    word_score = word_score + 1 - (Wrong_total_pho / Total_pho) * result_lst[j][-1]
+                #print(word_score)
+            similarity_measure = word_score
+            if similarity_measure > pre_max_similarity_measure:
+                max_similarity_word = result_lst[j][i]
         max_similarity_word_lst.append(max_similarity_word)
 
-    #print(max_similarity_word_lst)
+    print("최종 결과 : ", max_similarity_word_lst)
 
     # 부산대 표준발음 변환기
     url = parse.urlparse \
@@ -208,7 +242,6 @@ def similaritySentence(stt_results, sentence_standard):
                 #print(Total_pho)
                 #print(Wrong_total_pho)
 
-
             if search_standard[0]==standard_lst[standard_index]:
                 pronounce_lst.append(search_standard[0])
 
@@ -221,7 +254,7 @@ def similaritySentence(stt_results, sentence_standard):
 
     # 유사도가 가장 높은 word로 만든 sentence
     pronounce_sentence = " ".join(pronounce_lst)
-    #print(pronounce_sentence)
+    print("최종 결과 : ", pronounce_sentence)
     return pronounce_sentence
 
 
