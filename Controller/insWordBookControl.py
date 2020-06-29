@@ -27,6 +27,12 @@ def insWordBookControl():
                 message="duplicate word"
             )
 
+        # 단어가 빈 단어, space, tab이면 "empty sentence" 반환
+        if not word_data or word_data.isspace():
+            return jsonify(
+                message="empty word"
+            )
+
         # wordData를 받아서 wordbook 테이블에 단어 등록
         ins_wordbook = WordBook(word_data)
         db_session.add(ins_wordbook)

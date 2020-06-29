@@ -24,6 +24,12 @@ def insSentenceControl():
                 message="duplicate sentence"
             )
 
+        # 문장이 빈 문장, space, tab이면 "empty sentence" 반환
+        if not sentence_data or sentence_data.isspace():
+            return jsonify(
+                message="empty sentence"
+            )
+
         # 부산대 표준발음 변환기
         url = parse.urlparse \
             ("http://pronunciation.cs.pusan.ac.kr/pronunc2.asp?text1=안녕하세요&submit1=확인하기")
