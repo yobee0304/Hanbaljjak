@@ -111,13 +111,13 @@ def similaritySentence(stt_results, sentence_standard):
     for i in range(0, len(stt_r)):
         stt_r_lst = str(stt_r[i].transcript).split(" ")
         word_len_same = True
-    if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(stt_r[i].transcript):
-        for word_index in range(0, len(standard_lst)):
-            if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
-                word_len_same = False
+        if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(stt_r[i].transcript):
+            for word_index in range(0, len(standard_lst)):
+                if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
+                    word_len_same = False
                 break
-        if word_len_same:
-            speech_to_text_results.append(stt_r[i])
+            if word_len_same:
+                speech_to_text_results.append(stt_r[i])
 
     if len(speech_to_text_results) == 0:
         return ""
