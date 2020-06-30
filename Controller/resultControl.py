@@ -165,7 +165,7 @@ def similaritySentence(stt_results, sentence_standard):
 
                     # 글자가 일치하는 경우
                     if (result_lst[j][i][index] == word_one):
-                        if (StandPho[2] == ''):
+                        if (StandPho[2] == ' '):
                             Total_pho += 2
                         else:
                             Total_pho += 3
@@ -392,10 +392,12 @@ def resultControl():
 
                     if(UserPho[2] != StandPho[2]):
                         Wrong_total_pho += 1
-                        if StandPho[2] in Wrong_pho_dict['b']:
-                            Wrong_pho_dict['b'][SentencePho[2]] += 1
-                        else:
-                            Wrong_pho_dict['b'][SentencePho[2]] = 1
+
+                        if StandPho[2] != ' ':
+                            if StandPho[2] in Wrong_pho_dict['b']:
+                                Wrong_pho_dict['b'][SentencePho[2]] += 1
+                            else:
+                                Wrong_pho_dict['b'][SentencePho[2]] = 1
 
                 if (UserPho[0] != StandPho[0]):
                     Wrong_total_pho += 1
