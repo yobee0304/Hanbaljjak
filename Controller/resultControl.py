@@ -114,12 +114,12 @@ def similaritySentence(stt_results, sentence_standard):
     # stt 결과 중 표준발음과 길이 다른 것, 숫자, 영어 들어가는 것 제외.
     for i in range(0, len(stt_r)):
         stt_r_lst = str(stt_r[i].transcript).split(" ")
-        word_len_same = True
         if len(standard_lst) == len(stt_r_lst) and not hasNumberAlphabet(stt_r[i].transcript):
+            word_len_same = True
             for word_index in range(0, len(standard_lst)):
                 if len(standard_lst[word_index]) != len(stt_r_lst[word_index]):
                     word_len_same = False
-                break
+                    break
             if word_len_same:
                 speech_to_text_results.append(stt_r[i])
 
