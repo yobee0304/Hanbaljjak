@@ -75,9 +75,10 @@ def sample_recognize(file_path):
     # 신뢰도를 기준으로 오름차순
     speech_to_text_results = sorted(speech_to_text_results, key=lambda text: text.confidence)
 
-    print("Original STT RESULT : ")
+    print("\nOriginal STT RESULT : ")
     for i in speech_to_text_results:
         print(i.transcript, i.confidence)
+    print()
 
     if len(speech_to_text_results) > 0:
         return speech_to_text_results
@@ -205,6 +206,9 @@ def similaritySentence(stt_results, sentence_standard):
     qs = dict(parse.parse_qsl(url.query))
 
     for standard_index, word_data in enumerate(max_similarity_word_lst):
+        #if word_data == standard_lst[standard_index]:
+            #continue
+
         qs['text1'] = word_data
         url = url._replace(query=parse.urlencode(qs, encoding='euc-kr'))
         new_url = parse.urlunparse(url)
