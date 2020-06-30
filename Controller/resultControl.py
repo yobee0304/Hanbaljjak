@@ -266,7 +266,7 @@ def similaritySentence(stt_results, sentence_standard):
                 pronounce_lst.append(search_standard[0])
 
             # 표준 발음으로 변환한 결과가 아예 다른 단어로 바뀔 경우 원래 단어로 ex) 만땅 -> 가득
-            elif Wrong_total_pho / Total_pho > 0.4:
+            elif Wrong_total_pho / Total_pho > 0.7:
                 #print(Wrong_total_pho / Total_pho)
                 pronounce_lst.append(word_data)
             else:
